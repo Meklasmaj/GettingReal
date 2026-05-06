@@ -8,33 +8,44 @@ public abstract class Menu
 {
     public abstract void ShowMenu();
 
-    // Handles menu choices, takes input from user internally.
-    public virtual int HandleMenuChoice(int minChoice, int maxChoice)
+    // Arrow-key based menu system
+    protected int ShowInteractiveMenu(string[] options)
     {
-        int choice = 0;
-        bool parseable = false;
+        Console.WriteLine("Anvend ▲ ▼ til at vælge et menupunkt.");
+        Console.CursorVisible = false;
 
-        // While input can't be parsed, loop
-        while (!parseable)
+        int menuChoice = 1;
+        int count = options.Length;
+        string selected = "\u001b[32m"; // Color
+        string reset = "\u001b[0m";
+
+        (int left, int top) = Console.GetCursorPosition();
+
+        while (true)
         {
-            string input = Console.ReadLine();
-            parseable = int.TryParse(input, out choice);
+            Console.SetCursorPosition(left, top);
 
-            // If input is not a number
-            if (!parseable)
+            for (int i = 0; i < count; i++)
             {
-                Console.WriteLine("Ugyldigt!\nIndtast venligst et tal fra listen.");
+                bool isSelected = (menuChoice == i + 1);
+                Console.WriteLine($"{(isSelected ? selected + "►" : " ")} {options[i]}{reset}");
             }
-            else
+
+            ConsoleKeyInfo key = Console.ReadKey(true);
+
+            switch (key.Key)
             {
-                // If input is number but not within min/max
-                if (choice < minChoice || choice > maxChoice)
-                {
-                    Console.WriteLine("Ugyldigt!\nIndtast venligst et tal fra listen.");
-                    parseable = false;
-                }
+                case ConsoleKey.DownArrow:
+                    menuChoice = (menuChoice == 4 ? 1 : menuChoice + 1);
+                    break;
+
+                case ConsoleKey.UpArrow:
+                    menuChoice = (menuChoice == 1 ? 4 : menuChoice - 1);
+                    break;
+
+                case ConsoleKey.Enter:
+                    return menuChoice;
             }
         }
-        return choice;
     }
 }

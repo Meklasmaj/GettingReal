@@ -6,44 +6,27 @@ namespace LagersystemHansenSeest;
 
 public class MainMenu : Menu
 {
+    // The menu text
+    private static readonly string[] Options = ["Mulighed 1", "Mulighed 2", "Mulighed 3", "Mulighed 4"];
+
     public override void ShowMenu()
     {
-        Console.WriteLine("Anvend ▲ ▼ til at vælge et menupunkt.");
+        int choice = ShowInteractiveMenu(Options);
 
-        ConsoleKeyInfo key;
-        Console.CursorVisible = false;
-        int menuChoice = 1;
-        bool running = true;
-        (int left, int top) = Console.GetCursorPosition();
-        string selected = "\u001b[32m";
-        string reset = "\u001b[0m";
-
-        while (running)
+        switch (choice)
         {
-            Console.SetCursorPosition(left, top);
+            case 1:
 
-            Console.WriteLine($"{(menuChoice == 1 ? selected + "►" : " ")} Mulighed 1{reset}");
-            Console.WriteLine($"{(menuChoice == 2 ? selected + "►" : " ")} Mulighed 2{reset}");
-            Console.WriteLine($"{(menuChoice == 3 ? selected + "►" : " ")} Mulighed 3{reset}");
-            Console.WriteLine($"{(menuChoice == 4 ? selected + "►" : " ")} Mulighed 4{reset}");
+                break;
+            case 2:
 
-            key = Console.ReadKey(true);
+                break;
+            case 3:
 
-            switch (key.Key)
-            {
-                case ConsoleKey.DownArrow:
-                    menuChoice = (menuChoice == 4 ? 1 : menuChoice + 1);
-                    break;
+                break;
+            case 4:
 
-                case ConsoleKey.UpArrow:
-                    menuChoice = (menuChoice == 1 ? 4 : menuChoice - 1);
-                    break;
-
-                case ConsoleKey.Enter:
-                    running = false;
-                    break;
-            }
+                break;
         }
-
     }
 }
