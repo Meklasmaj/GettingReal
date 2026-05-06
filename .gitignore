@@ -3,3 +3,7 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+/.vs/LagersystemHansenSeest/DesignTimeBuild/.dtbcache.v2
+/.vs/LagersystemHansenSeest/FileContentIndex/27c2a1db-a033-4cb8-8327-2df6bdd968b7.vsidx
+/.gitignore
+/.vs
