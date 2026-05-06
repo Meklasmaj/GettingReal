@@ -8,7 +8,6 @@ namespace EasyWarehouseManagementSystem.Core.Interfaces;
 internal interface IGenericRepo<T>
 {
     T? Get(int id);
-    T? Get(string name);
     IEnumerable<T> GetAll();
     void Add(T item);
     void Update(T item);
