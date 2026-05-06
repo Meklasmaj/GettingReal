@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LagersystemHansenSeest;
+﻿namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 public abstract class Menu
 {

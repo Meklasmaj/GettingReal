@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace LagersystemHansenSeest;
+namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 class Program
 {

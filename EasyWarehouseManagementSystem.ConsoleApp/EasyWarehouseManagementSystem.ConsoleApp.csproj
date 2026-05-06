@@ -8,4 +8,8 @@
         <RootNamespace>LagersystemHansenSeest</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\EasyWarehouseManagementSystem.Core\EasyWarehouseManagementSystem.Core.csproj" />
+    </ItemGroup>
+
 </Project>

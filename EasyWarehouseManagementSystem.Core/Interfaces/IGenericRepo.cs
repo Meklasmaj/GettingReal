@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LagersystemHansenSeest.Interfaces;
+namespace EasyWarehouseManagementSystem.Core.Interfaces;
 
 // Generic repo interface
 internal interface IGenericRepo<T>
