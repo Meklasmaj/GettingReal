@@ -9,7 +9,7 @@ public class Product
     public double Price { get; private set; }
     public Popularity Popularity { get; private set; }
     public Category Category { get; private set; }
-    private CategoryRepo _categoryRepo = new CategoryRepo();
+    private static CategoryRepo _categoryRepo = new CategoryRepo();
 
     public Product(string name, string id, double price, Popularity popularity, Category category)
     {
@@ -31,7 +31,7 @@ public class Product
     /// <summary>
     /// Method to create a Product from a string
     /// </summary>
-    public Product FromString(string data)
+    public static Product FromString(string data)
     {
         string[] parts = data.Split('|');
         string name = parts[0];
