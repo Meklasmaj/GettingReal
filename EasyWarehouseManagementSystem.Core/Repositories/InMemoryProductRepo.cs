@@ -14,7 +14,7 @@ public class InMemoryProductRepo : IGenericRepo<Product>
 
     public IEnumerable<Product> GetAll()
     {
-        return _products;
+        return new List<Product>(_products);
     }
 
     public void Add(Product item)

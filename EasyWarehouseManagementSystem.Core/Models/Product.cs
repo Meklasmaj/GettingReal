@@ -38,7 +38,11 @@ public class Product
         string id = parts[1];
         double price = Convert.ToDouble(parts[2]);
         Popularity popularity = (Popularity)Enum.Parse(typeof(Popularity), parts[3]);
-        Category category = _categoryRepo.GetCategories().ToList()[Convert.ToInt32(parts[4])];
+        Category? category = _categoryRepo.GetCategories().ElementAtOrDefault(Convert.ToInt32(parts[4]));
+        if (category == null)
+        {
+            category = _categoryRepo.GetCategories().ElementAt(0);
+        }
         return new Product(name, id, price, popularity, category);
     }
 }

@@ -5,7 +5,6 @@ namespace EasyWarehouseManagementSystem.Core.Repositories;
 
 public class FileProductRepo : IGenericRepo<Product>
 {
-    private List<Product> _products = new List<Product>();
     private string _filePath;
 
     public FileProductRepo(string path)
@@ -13,46 +12,93 @@ public class FileProductRepo : IGenericRepo<Product>
         _filePath = path;
     }
 
-    public Product Get(string id)
+    public Product? Get(string id)
     {
-        //Not Done
-        return _products.Find(p => p.Id == id);
+        return GetAll().FirstOrDefault(p => p.Id == id);
     }
 
     public IEnumerable<Product> GetAll()
     {
-        _products.Clear();
-        using (StreamReader sr = new StreamReader(_filePath))
+        List<Product> products = new List<Product>();
+        try
         {
-            string line;
-            while ((line = sr.ReadLine()) != null)
+            //Read file and add products to list
+            using (StreamReader sr = new StreamReader(_filePath))
             {
-                if (!string.IsNullOrEmpty(line))
+                string? line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    _products.Add(Product.FromString(line));
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        products.Add(Product.FromString(line));
+                    }
                 }
             }
         }
+        catch (FileNotFoundException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        catch (DirectoryNotFoundException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
 
-        return _products;
+        return products;
     }
 
     public void Add(Product item)
     {
-        //Not Done
-        _products.Add(item);
+        List<Product> products = GetAll().ToList();
+        products.Add(item);
+        WriteToFile(products);
     }
 
     public void Update(Product item)
     {
-        //Not Done
-        _products[(_products.IndexOf(_products.Find(p => p.Id == item.Id)))] = item;
+        List<Product> products = GetAll().ToList();
+        products[(products.IndexOf(products.Find(p => p.Id == item.Id)))] = item;
+        WriteToFile(products);
     }
 
     public void Delete(string id)
     {
-        //Not Done
-        _products.Remove(_products.Find(p => p.Id == id));
+        List<Product> products = GetAll().ToList();
+        products.Remove(products.Find(p => p.Id == id));
+        WriteToFile(products);
+    }
+
+    public void WriteToFile(List<Product> products)
+    {
+        try
+        {
+            using (StreamWriter sw = new StreamWriter("products.tmp"))
+            {
+                foreach (Product product in products)
+                {
+                    sw.WriteLine(product.ToString());
+                }
+            }
+            File.Move("products.tmp", _filePath, overwrite:true);
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine(e.Message);
+            File.Delete("products.tmp");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            File.Delete("products.tmp");
+        }
     }
 
     public IEnumerable<Product> Search(string term)
