@@ -8,6 +8,11 @@ class Program
     {
         // To show ÆØÅ in the console
         Console.OutputEncoding = Encoding.UTF8;
-        Console.WriteLine("Hello, World!");
+        
+        Menu menu = new MainMenu();
+        while(true)
+        {
+            menu.ShowMenu();
+        }
     }
 }
