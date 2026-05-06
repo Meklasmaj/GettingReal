@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWarehouseManagementSystem.ConsoleApp", "EasyWarehouseManagementSystem.ConsoleApp\EasyWarehouseManagementSystem.ConsoleApp.csproj", "{F2E73910-03A7-4266-8FAC-E17F6162EA9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWarehouseManagementSystem.Core", "EasyWarehouseManagementSystem.Core\EasyWarehouseManagementSystem.Core.csproj", "{FEC6AD92-E86D-4836-9DE5-8E14624EF634}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2E73910-03A7-4266-8FAC-E17F6162EA9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E73910-03A7-4266-8FAC-E17F6162EA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E73910-03A7-4266-8FAC-E17F6162EA9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E73910-03A7-4266-8FAC-E17F6162EA9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
