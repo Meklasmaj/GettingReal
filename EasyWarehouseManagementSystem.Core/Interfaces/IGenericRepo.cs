@@ -7,10 +7,10 @@ namespace EasyWarehouseManagementSystem.Core.Interfaces;
 // Generic repo interface
 internal interface IGenericRepo<T>
 {
-    T? Get(string id);
+    T? Get(int id);
     IEnumerable<T> GetAll();
     void Add(T item);
     void Update(T item);
-    void Delete(string id);
+    void Delete(int id);
     IEnumerable<T> Search(string term);
 }
