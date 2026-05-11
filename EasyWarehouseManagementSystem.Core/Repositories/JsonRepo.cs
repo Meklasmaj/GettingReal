@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using EasyWarehouseManagementSystem.Core.Interfaces;
-using EasyWarehouseManagementSystem.Core.Models;
 
 namespace EasyWarehouseManagementSystem.Core.Repositories;
 

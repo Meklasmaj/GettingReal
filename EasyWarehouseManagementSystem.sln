@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWarehouseManagementSyst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWarehouseManagementSystem.Core", "EasyWarehouseManagementSystem.Core\EasyWarehouseManagementSystem.Core.csproj", "{FEC6AD92-E86D-4836-9DE5-8E14624EF634}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EWMSTests", "EWMSTests\EWMSTests.csproj", "{6A3A2BEB-C449-4296-A7E3-67CBD8EA6579}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEC6AD92-E86D-4836-9DE5-8E14624EF634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A3A2BEB-C449-4296-A7E3-67CBD8EA6579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A3A2BEB-C449-4296-A7E3-67CBD8EA6579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A3A2BEB-C449-4296-A7E3-67CBD8EA6579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A3A2BEB-C449-4296-A7E3-67CBD8EA6579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
