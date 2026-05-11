@@ -19,6 +19,12 @@ namespace EasyWarehouseManagementSystem.Core.Models
             term = term.ToLower();
             return stocks.Where(s => s.Product.Name.ToLower().Contains(term));
         }
-
+        // Searches for suppliers by name or brand. Includes null checks, as name and brand can be null in Supplier.cs
+        public static IEnumerable<Supplier> Search(string term, IEnumerable<Supplier> suppliers)
+        {
+            term = term.ToLower();
+            return suppliers.Where(s => (s.Name != null && s.Name.ToLower().Contains(term)) ||
+                                        (s.Brands != null && s.Brands.Any(b => b.ToLower().Contains(term))));
+        }
     }
 }
