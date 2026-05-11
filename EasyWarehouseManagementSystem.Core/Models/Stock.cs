@@ -1,6 +1,6 @@
 ﻿namespace EasyWarehouseManagementSystem.Core.Models
 {
-    internal class Stock
+    public class Stock
     {
         // The variables and properties of the Stock class
         public Product Product { get; }
@@ -18,6 +18,8 @@
         // Method to add stock
         public void AddStock(int amount)
         {
+            if(amount <= 0)
+                throw new ArgumentException("Antallet, der skal tilføjes, skal være større end 0.");
             Amount += amount;
         }
 
@@ -25,38 +27,25 @@
         public void RemoveStock(int amount)
         {
             if (Amount - amount < 0)
-            {
-                throw new InvalidOperationException("Cannot remove more stock than available.");
-            }
+                throw new InsufficientStockException($"Kan ikke fjerne {amount} — kun {Amount} på lager.");
             Amount -= amount;
         }
 
+        // Method to show the stock amount
+        public int ShowStock() => Amount;
+
         // Method to change the stock status
-        public void UpdateStock()
+        public void ToggleStockActivity()
         {
-            if (IsActive)
-            {
-                IsActive = false;
-            }
-            else
-            {
-                IsActive = true;
-            }
+            IsActive = !IsActive;
         }
 
         // Method to check if the stock is below the minimum stock amount
         public bool IsBelowMinStock()
         {
-            if (Product.Category.MinStockAmount == 0)
-            {
-                return false;
-            }
-            else
-            {
-                if (IsActive)
-                    return Amount < Product.Category.MinStockAmount;
-            }
-            return false;
+            return IsActive 
+                && Product.Category.MinStockAmount > 0
+                && Amount < Product.Category.MinStockAmount;
         }
 
         // ToString method to display the stock information
