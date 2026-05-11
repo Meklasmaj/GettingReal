@@ -26,5 +26,12 @@ namespace EasyWarehouseManagementSystem.Core.Models
             return suppliers.Where(s => (s.Name != null && s.Name.ToLower().Contains(term)) ||
                                         (s.Brands != null && s.Brands.Any(b => b.ToLower().Contains(term))));
         }
+        // Searches for draft orders by supplier name or order ID
+        public static IEnumerable<DraftOrder> Search(string term, IEnumerable<DraftOrder> orders)
+        {
+            term = term.ToLower();
+            return orders.Where(o => o.Supplier.Name.ToLower().Contains(term) ||
+                                     o.Id.ToString().Contains(term));
+        }
     }
 }
