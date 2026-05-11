@@ -1,4 +1,5 @@
 ﻿using EasyWarehouseManagementSystem.Core.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace EasyWarehouseManagementSystem.Core.Models
 {
@@ -10,6 +11,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         public double? LowerDeliveryLimit { get; private set; } = 0.0;
 
         // Constructor for the Supplier class
+        [JsonConstructor] // This attribute allows the constructor to be used during JSON deserialization, since we have private setters for the properties.
         public Supplier(int id, string name, List<string> brands, double lowerDeliveryLimit)
         {
             Id = id;
