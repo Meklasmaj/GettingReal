@@ -1,18 +1,22 @@
 ﻿using EasyWarehouseManagementSystem.Core.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace EasyWarehouseManagementSystem.Core.Models
 {
-    public class Stock
+    public class Stock : IHasId
     {
         // The variables and properties of the Stock class
-        public Product Product { get; }
+        public int Id { get; set; }
+        public Product? Product { get; private set; }
         public int Amount { get; private set; }
         public bool IsActive { get; private set; }
 
         // The constructor for the Stock class
-        public Stock(Product product, int amount)
+        public Stock() { } // JsonConstructor for deserialization
+        public Stock(int id, Product product, int amount)
         {
-            Product = product;
+            Id = id;
+            Product = product ?? throw new ArgumentNullException(nameof(product), "Produktet kan ikke være null.");
             Amount = amount;
             IsActive = true;
         }
@@ -33,9 +37,6 @@ namespace EasyWarehouseManagementSystem.Core.Models
                 // throw new InsufficientStockException($"Kan ikke fjerne {amount} — kun {Amount} på lager.");
             Amount -= amount;
         }
-
-        // Method to show the stock amount
-        public int ShowStock() => Amount;
 
         // Method to change the stock status
         public void ToggleStockActivity()
