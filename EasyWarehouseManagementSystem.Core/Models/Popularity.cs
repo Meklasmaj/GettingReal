@@ -2,7 +2,7 @@
 
 public enum Popularity
 {
-    VeryPopular = 2,
-    Popular = 1,
     NotPopular = 0,
+    Popular = 1,
+    VeryPopular = 2
 }
