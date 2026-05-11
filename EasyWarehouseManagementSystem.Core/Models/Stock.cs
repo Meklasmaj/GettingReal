@@ -1,4 +1,6 @@
-﻿namespace EasyWarehouseManagementSystem.Core.Models
+﻿using EasyWarehouseManagementSystem.Core.Interfaces;
+
+namespace EasyWarehouseManagementSystem.Core.Models
 {
     public class Stock
     {
@@ -27,7 +29,8 @@
         public void RemoveStock(int amount)
         {
             if (Amount - amount < 0)
-                throw new InsufficientStockException($"Kan ikke fjerne {amount} — kun {Amount} på lager.");
+                throw new ArgumentException("Antallet, der skal fjernes, kan ikke være større end det nuværende lagerbeholdning.");
+                // throw new InsufficientStockException($"Kan ikke fjerne {amount} — kun {Amount} på lager.");
             Amount -= amount;
         }
 
@@ -54,14 +57,5 @@
             return $"Varenr.: {Product.Id} | Produkt: {Product.Name} | Antal: {Amount} stk. | Aktiv: {IsActive}";
         }
 
-        // FromString method to create a Stock object from a string
-        //public static Stock FromString(string stockString)
-        //{
-        //    if (!isActive)
-        //    {
-        //        stock.UpdateStock();
-        //    }
-        //    return stock;
-        //}
     }
 }
