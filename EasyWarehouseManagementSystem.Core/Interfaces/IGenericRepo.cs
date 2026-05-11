@@ -5,7 +5,7 @@ using System.Text;
 namespace EasyWarehouseManagementSystem.Core.Interfaces;
 
 // Generic repo interface
-internal interface IGenericRepo<T>
+public interface IGenericRepo<T>
 {
     T? Get(int id);
     IEnumerable<T> GetAll();
