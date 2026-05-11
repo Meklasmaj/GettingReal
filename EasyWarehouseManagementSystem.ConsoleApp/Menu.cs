@@ -32,11 +32,11 @@ public abstract class Menu
             switch (key.Key)
             {
                 case ConsoleKey.DownArrow:
-                    menuChoice = (menuChoice == 4 ? 1 : menuChoice + 1);
+                    menuChoice = (menuChoice == count ? 1 : menuChoice + 1);
                     break;
 
                 case ConsoleKey.UpArrow:
-                    menuChoice = (menuChoice == 1 ? 4 : menuChoice - 1);
+                    menuChoice = (menuChoice == 1 ? count : menuChoice - 1);
                     break;
 
                 case ConsoleKey.Enter:
