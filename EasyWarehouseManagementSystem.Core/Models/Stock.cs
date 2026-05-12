@@ -21,35 +21,23 @@ namespace EasyWarehouseManagementSystem.Core.Models
             IsActive = true;
         }
 
-        // Method to add stock
-        public void AddStock(int amount)
+        // Method to edit the stock amount directly
+        public void EditStockAmount(int newAmount)
         {
-            if(amount <= 0)
-                throw new ArgumentException("Antallet, der skal tilføjes, skal være større end 0.");
-            Amount += amount;
-        }
-
-        // Method to remove stock
-        public void RemoveStock(int amount)
-        {
-            if (Amount - amount < 0)
-                throw new ArgumentException("Antallet, der skal fjernes, kan ikke være større end det nuværende lagerbeholdning.");
-                // throw new InsufficientStockException($"Kan ikke fjerne {amount} — kun {Amount} på lager.");
-            Amount -= amount;
+            if (newAmount < 0)
+                throw new ArgumentException("Antal kan ikke være negativt.");
+            Amount = newAmount;
         }
 
         // Method to change the stock status
-        public void ToggleStockActivity()
-        {
-            IsActive = !IsActive;
-        }
+        public void ToggleStockActivity() => IsActive = !IsActive;
 
         // Method to check if the stock is below the minimum stock amount
         public bool IsBelowMinStock()
         {
-            return IsActive 
-                && Product.Category.MinStockAmount > 0
-                && Amount < Product.Category.MinStockAmount;
+            return IsActive                                     // Tjekker om produktet er aktivt i forhold til lagerstyring
+                && Product?.Category?.MinStockAmount > 0        // Tjekker om der er en gyldig minimum lagerbeholdning defineret for produktets kategori
+                && Amount < Product?.Category?.MinStockAmount;  // Samlet tjek for at afgøre om lagerbeholdningen er under minimumsgrænsen
         }
 
         // ToString method to display the stock information

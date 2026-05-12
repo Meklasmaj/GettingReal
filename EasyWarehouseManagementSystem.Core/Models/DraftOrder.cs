@@ -19,10 +19,10 @@ namespace EasyWarehouseManagementSystem.Core.Models
         public DraftOrder(int id, OrderStatus? status = null, Product? product = null, Supplier? supplier = null, DateTime? timeStamp = null)
         {
             Id = id;
-            Status = status ?? OrderStatus.Open;                                                                // If null - use Open as default status
+            Status = status ?? OrderStatus.Open;    // If null - use Open as default status
             Product = product;
             Supplier = supplier;
-            TimeStamp = timeStamp ?? DateTime.Now;                                                              // If null - use the current date and time as default timestamp
+            TimeStamp = timeStamp ?? DateTime.Now;  // If null - use the current date and time as default timestamp
         }
 
         public override string ToString()
