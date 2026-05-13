@@ -3,7 +3,7 @@ using EasyWarehouseManagementSystem.Core.Models;
 
 namespace EasyWarehouseManagementSystem.Core.Repositories;
 
-public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId
+public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
 {
     private List<T> _items = new List<T>();
     public bool _isReady { get; } = false;
@@ -35,7 +35,7 @@ public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId
 
     public IEnumerable<T> Search(string term)
     {
-        //Needs functionality after SearchEngine
-        return new List<T>();
+        string[] terms = term.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return _items.Where(item => terms.All(t => item.GetSearchableText().ToLower().Contains(t)));
     }
 }
