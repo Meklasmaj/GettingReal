@@ -22,4 +22,9 @@ public class Product : IHasId
         Category = category;
         ProductNumber = productNumber;
     }
+
+    public override string ToString()
+    {
+        return $"Produkt-navn : {Name} | Produkt-nummer : {ProductNumber} | Pris : {Price} |  Popularity : {Popularity} | Category : {Category.Name}";
+    }
 }
