@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace EasyWarehouseManagementSystem.Core.Models
 {
     // Trying out the new constructor mode for DraftOrder class (C# 12.0 feature)
-    public class DraftOrder : IHasId
+    public class DraftOrder : IHasId, ISearchable
     {
         public int Id { get; set; }
         // public set is nessary for JSON deserialization. Encapsulation is handled by the application layer,
@@ -29,6 +29,6 @@ namespace EasyWarehouseManagementSystem.Core.Models
         {
             return $"Ordre ID: {Id} | Oprettet: {TimeStamp} | Status: {Status} | Leverandør: {Supplier?.Name} | Produkt: {Product?.Name} | Antal: {Product?.Category?.MinOrderAmount}";
         }
-            
+        public string GetSearchableText() => $"{Id} {Supplier?.Name} {Product?.Name}";
     }
 }

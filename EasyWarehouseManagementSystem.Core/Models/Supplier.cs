@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EasyWarehouseManagementSystem.Core.Models
 {
-    public class Supplier : IHasId
+    public class Supplier : IHasId, ISearchable
     {
         public int Id { get; }
         public string? Name { get; private set; } = "Unknown";
@@ -39,5 +39,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         {
             return $"Leverandør ID: {Id} | Navn: {Name} | Mærker: {string.Join(", ", Brands ?? Enumerable.Empty<string>())} | Minimumsordre: {LowerDeliveryLimit} kr.";
         }
+
+        public string GetSearchableText() => $"{Name} {string.Join(" ", Brands)}";
     }
 }
