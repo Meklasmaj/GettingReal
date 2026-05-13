@@ -3,7 +3,7 @@ using EasyWarehouseManagementSystem.Core.Repositories;
 
 namespace EasyWarehouseManagementSystem.Core.Models;
 
-public class Product : IHasId
+public class Product : IHasId, ISearchable
 {
     public string Name { get; private set; }
     public int Id { get; }
@@ -22,9 +22,11 @@ public class Product : IHasId
         Category = category;
         ProductNumber = productNumber;
     }
-
+    
     public override string ToString()
     {
         return $"Produkt-navn : {Name} | Produkt-nummer : {ProductNumber} | Pris : {Price} |  Popularity : {Popularity} | Category : {Category.Name}";
     }
+
+    public string GetSearchableText() => $"{Name} {ProductNumber}";
 }

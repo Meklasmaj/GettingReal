@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EasyWarehouseManagementSystem.Core.Models
 {
-    public class Stock : IHasId
+    public class Stock : IHasId, ISearchable
     {
         // The variables and properties of the Stock class
         public int Id { get; set; }
@@ -45,6 +45,6 @@ namespace EasyWarehouseManagementSystem.Core.Models
         {
             return $"Varenr.: {Product.Id} | Produkt: {Product.Name} | Antal: {Amount} stk. | Aktiv: {IsActive}";
         }
-
+        public string GetSearchableText() => Product.GetSearchableText();
     }
 }
