@@ -4,7 +4,7 @@ using EasyWarehouseManagementSystem.Core.Models;
 namespace EWMSTests;
 
 [TestClass]
-public sealed class ProductTests
+public sealed class ProductRepoTests
 {
     [TestMethod]
     public void Add_Products_InMemoryRepo_CorretAmountSaved()
