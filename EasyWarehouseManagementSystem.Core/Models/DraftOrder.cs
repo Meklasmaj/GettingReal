@@ -29,6 +29,9 @@ namespace EasyWarehouseManagementSystem.Core.Models
         {
             return $"Ordre ID: {Id} | Oprettet: {TimeStamp} | Status: {Status} | Leverandør: {Supplier?.Name} | Produkt: {Product?.Name} | Antal: {Product?.Category?.MinOrderAmount}";
         }
-        public string GetSearchableText() => $"{Id} {Supplier?.Name} {Product?.Name}";
+        public string GetSearchableText()
+        {
+            return $"{Id} {Supplier?.Name} {Product?.Name}";
+        }
     }
 }

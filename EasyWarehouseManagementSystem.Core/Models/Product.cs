@@ -28,5 +28,8 @@ public class Product : IHasId, ISearchable
         return $"Produkt-navn : {Name} | Produkt-nummer : {ProductNumber} | Pris : {Price} |  Popularity : {Popularity} | Category : {Category.Name}";
     }
 
-    public string GetSearchableText() => $"{Name} {ProductNumber}";
+    public string GetSearchableText()
+    {
+        return $"{Name} {ProductNumber}";
+    }
 }
