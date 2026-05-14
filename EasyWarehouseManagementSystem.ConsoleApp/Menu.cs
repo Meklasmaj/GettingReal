@@ -41,6 +41,9 @@ public abstract class Menu
 
                 case ConsoleKey.Enter:
                     return menuChoice;
+                
+                case ConsoleKey.Escape:
+                    return -1;
             }
         }
     }
