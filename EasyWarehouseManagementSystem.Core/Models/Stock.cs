@@ -43,7 +43,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         // ToString method to display the stock information
         public override string ToString()
         {
-            return $"Varenr.: {Product.Id} | Produkt: {Product.Name} | Antal: {Amount} stk. | Aktiv: {IsActive}";
+            return $"Varenr.: {Product.ProductNumber} | Produkt: {Product.Name} | Antal: {Amount} stk. | Aktiv: {IsActive}";
         }
         public string GetSearchableText()
         {
