@@ -40,6 +40,9 @@ namespace EasyWarehouseManagementSystem.Core.Models
             return $"Leverandør ID: {Id} | Navn: {Name} | Mærker: {string.Join(", ", Brands ?? Enumerable.Empty<string>())} | Minimumsordre: {LowerDeliveryLimit} kr.";
         }
 
-        public string GetSearchableText() => $"{Name} {string.Join(" ", Brands)}";
+        public string GetSearchableText()
+        {
+            return $"{Name} {string.Join(" ", Brands)}";
+        }
     }
 }

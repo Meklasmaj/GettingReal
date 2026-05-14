@@ -45,6 +45,9 @@ namespace EasyWarehouseManagementSystem.Core.Models
         {
             return $"Varenr.: {Product.Id} | Produkt: {Product.Name} | Antal: {Amount} stk. | Aktiv: {IsActive}";
         }
-        public string GetSearchableText() => Product.GetSearchableText();
+        public string GetSearchableText()
+        {
+            return Product.GetSearchableText();
+        }
     }
 }

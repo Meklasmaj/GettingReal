@@ -23,5 +23,8 @@ public class Product : IHasId, ISearchable
         ProductNumber = productNumber;
     }
 
-    public string GetSearchableText() => $"{Name} {ProductNumber}";
+    public string GetSearchableText()
+    {
+        return $"{Name} {ProductNumber}";
+    }
 }
