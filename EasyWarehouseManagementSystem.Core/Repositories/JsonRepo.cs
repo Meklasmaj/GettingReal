@@ -6,6 +6,7 @@ namespace EasyWarehouseManagementSystem.Core.Repositories;
 public class JsonRepo<T> : IGenericRepo<T> where T : IHasId
 {
     private string _filePath;
+    private int _id = 0;
 
     public JsonRepo(string path)
     {
@@ -62,6 +63,8 @@ public class JsonRepo<T> : IGenericRepo<T> where T : IHasId
     public void Add(T item)
     {
         List<T> items = GetAll().ToList();
+        _id = items.Max(p => p.Id) + 1;
+        item.Id = _id;
         items.Add(item);
         Save(items);
     }

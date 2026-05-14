@@ -5,7 +5,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
 {
     public class Supplier : IHasId, ISearchable
     {
-        public int Id { get; }
+        public int Id { get; set; }
         public string? Name { get; private set; } = "Unknown";
         public List<string>? Brands { get; private set; } = new List<string>();
         public double? LowerDeliveryLimit { get; private set; } = 0.0;

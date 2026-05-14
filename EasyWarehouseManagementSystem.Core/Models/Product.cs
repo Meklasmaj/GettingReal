@@ -6,7 +6,7 @@ namespace EasyWarehouseManagementSystem.Core.Models;
 public class Product : IHasId, ISearchable
 {
     public string Name { get; private set; }
-    public int Id { get; }
+    public int Id { get; set; }
     public string ProductNumber { get; private set; }
     public double Price { get; private set; }
     public Popularity Popularity { get; private set; }

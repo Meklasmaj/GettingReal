@@ -6,7 +6,7 @@ namespace EasyWarehouseManagementSystem.Core.Repositories;
 public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
 {
     private List<T> _items = new List<T>();
-    public bool _isReady { get; } = false;
+    private int _id = 0;
 
     public T? Get(int id)
     {
@@ -20,6 +20,8 @@ public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
 
     public void Add(T item)
     {
+        _id = _items.Max(p => p.Id) + 1;
+        item.Id = _id;
         _items.Add(item);
     }
 
