@@ -22,6 +22,7 @@ public class ProductMenu : Menu
     }
     public override void ShowMenu()
     {
+        Console.Clear();
         int choice = ShowInteractiveMenu(Options);
 
         switch (choice)
