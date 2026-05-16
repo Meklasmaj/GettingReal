@@ -2,16 +2,17 @@
 
 public class MainMenu : Menu
 {
-    private static int _notifications = 0;
-    public MainMenu(int notifications)
+    private static int _draftOrderNotifications;
+    public MainMenu(int draftOrderNotifications)
     {
-        _notifications = notifications;
+        _draftOrderNotifications = draftOrderNotifications;
     }
-    // The menu text
-    private static readonly string[] Options = [$"Kladdeordrer : {_notifications.ToString()}", "Lager", "Produkter", "Leverandører"];
 
     public override void ShowMenu()
     {
+        ShowHeader("Hovedmenu");
+        // The menu text
+        string[] Options = [$"Kladdeordrer : {_draftOrderNotifications}", "Lager", "Produkter", "Leverandører"];
         int choice = ShowInteractiveMenu(Options);
 
         switch (choice)

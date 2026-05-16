@@ -11,12 +11,12 @@ class Program
     private static IGenericRepo<Stock> stockRepo = new JsonRepo<Stock>("stocks.json");
     private static IGenericRepo<Supplier> supplierRepo = new JsonRepo<Supplier>("suppliers.json");
     private static IGenericRepo<DraftOrder> draftOrderRepo = new JsonRepo<DraftOrder>("draftOrders.json");
-    public static Menu MainMenu = new MainMenu(CheckNotifications());
+    public static Menu MainMenu = new MainMenu(CheckDraftOrderNotifications());
     // Needs new methods
-    public static Menu ProductMenu = new MainMenu(CheckNotifications());
-    public static Menu StockMenu = new MainMenu(CheckNotifications());
-    public static Menu SupplierMenu = new MainMenu(CheckNotifications());
-    public static Menu DraftOrderMenu = new MainMenu(CheckNotifications());
+    public static Menu ProductMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu StockMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu SupplierMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu DraftOrderMenu = new MainMenu(CheckDraftOrderNotifications());
     
     static void Main(string[] args)
     {
@@ -29,7 +29,20 @@ class Program
         }
     }
 
-    public static int CheckNotifications()
+    public static int CheckDraftOrderNotifications()
+    {
+        int num = 0;
+        foreach (var draftOrder in draftOrderRepo.GetAll())
+        {
+            if (draftOrder.IsOpen())
+            {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    public static int CheckLowStockNotifications()
     {
         int num = 0;
         foreach (var stock in stockRepo.GetAll())
