@@ -34,7 +34,7 @@ public class ProductMenu : Menu
                 ShowAllProducts();
                 break;
             case 2:
-            //    SearchProduct();
+                SearchProduct();
                 break;
             case 3:
             //    CreateProduct();
@@ -63,6 +63,31 @@ public class ProductMenu : Menu
         {
             Console.WriteLine($"\n--- {group.Key} ---");
             foreach (Product p in group)
+            {
+                Console.WriteLine(p);
+            }
+        }
+
+        Console.WriteLine("\nTryk på en tast for at fortsætte...");
+        Console.ReadKey();
+    }
+
+    // Searches for products by name or product number
+    private void SearchProduct()
+    {
+        Console.Clear();
+        Console.Write("Søgeord: ");
+        string term = Console.ReadLine() ?? "";
+
+        IEnumerable<Product> results = _productRepo.Search(term);
+
+        if (!results.Any())
+        {
+            Console.WriteLine("Ingen produkter fundet.");
+        }
+        else
+        {
+            foreach (Product p in results)
             {
                 Console.WriteLine(p);
             }
