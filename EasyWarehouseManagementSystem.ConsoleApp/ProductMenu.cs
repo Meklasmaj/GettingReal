@@ -31,7 +31,7 @@ public class ProductMenu : Menu
             case 0:
                 break;
             case 1:
-            //    ShowAllProducts();
+                ShowAllProducts();
                 break;
             case 2:
             //    SearchProduct();
@@ -43,5 +43,32 @@ public class ProductMenu : Menu
             //    ToggleProductActive();
                 break;
         }
+    }
+    private void ShowAllProducts()
+    {
+        Console.Clear();
+        IEnumerable<Product> products = _productRepo.GetAll();
+
+        if (!products.Any())
+        {
+            Console.WriteLine("Ingen produkter fundet.");
+            Console.ReadKey();
+            return;
+        }
+
+        // Group products by category
+        IEnumerable<IGrouping<string, Product>> grouped = products.GroupBy(p => p.Category.Name);
+
+        foreach (IGrouping<string, Product> group in grouped)
+        {
+            Console.WriteLine($"\n--- {group.Key} ---");
+            foreach (Product p in group)
+            {
+                Console.WriteLine(p);
+            }
+        }
+
+        Console.WriteLine("\nTryk på en tast for at fortsætte...");
+        Console.ReadKey();
     }
 }
