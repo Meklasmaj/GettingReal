@@ -22,26 +22,30 @@ public class ProductMenu : Menu
     }
     public override void ShowMenu()
     {
-        Console.Clear();
-        int choice = ShowInteractiveMenu(Options);
-
-        switch (choice)
+        bool running = true;
+        while (running)
         {
-            case -1:
-            case 0:
-                break;
-            case 1:
-                ShowAllProducts();
-                break;
-            case 2:
-                SearchProduct();
-                break;
-            case 3:
-            //    CreateProduct();
-                break;
-            case 4:
-            //    ToggleProductActive();
-                break;
+            Console.Clear();
+            int choice = ShowInteractiveMenu(Options);
+
+            switch (choice)
+            {
+                case -1:
+                    running = false;
+                    break;
+                case 1:
+                    ShowAllProducts();
+                    break;
+                case 2:
+                    SearchProduct();
+                    break;
+                case 3:
+                //    CreateProduct();
+                    break;
+                case 4:
+                //    ToggleProductActive();
+                    break;
+            }
         }
     }
     private void ShowAllProducts()
