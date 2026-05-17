@@ -154,7 +154,6 @@ public class ProductMenu : Menu
                 Console.WriteLine($"  {White}{p.ProductNumber.PadRight(colNumber)}{Gray}{name.PadRight(colName)}{Reset}{$"{p.Price:F2} kr.".PadRight(colPrice)}{popularity.PadRight(colPopularity)}{amount}");
             }
         }
-
         WaitForEscape();
     }
 
