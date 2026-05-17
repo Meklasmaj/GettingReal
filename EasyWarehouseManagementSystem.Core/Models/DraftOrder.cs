@@ -65,5 +65,9 @@ namespace EasyWarehouseManagementSystem.Core.Models
             }
             return line;
         }
+        public bool IsOpen()
+        {
+            return Status == OrderStatus.Open;
+        }
     }
 }
