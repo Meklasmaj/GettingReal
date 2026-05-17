@@ -20,10 +20,11 @@ class Program
     
     static void Main(string[] args)
     {
-        // To show ÆØÅ in the console
+        // To show ÆØÅ in the console, and to store ÆØÅ inputs.
         Console.OutputEncoding = Encoding.UTF8;
-        
-        while(true)
+        Console.InputEncoding = Encoding.UTF8;
+
+        while (true)
         {
             MainMenu.ShowMenu();
         }
