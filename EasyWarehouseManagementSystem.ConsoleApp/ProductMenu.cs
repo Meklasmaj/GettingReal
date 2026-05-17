@@ -43,7 +43,7 @@ public class ProductMenu : Menu
                     CreateProduct();
                     break;
                 case 4:
-                //    ToggleProductActive();
+                    ToggleProductActive();
                     break;
             }
         }
@@ -137,6 +137,29 @@ public class ProductMenu : Menu
         _stockRepo.Add(stock);
 
         Console.WriteLine($"\n✓ Produktet '{name}' er oprettet.");
+        Console.ReadKey();
+    }
+    // Toggles a product's active status
+    private void ToggleProductActive()
+    {
+        ShowHeader("Markér produkt inaktivt");
+        List<Stock> stock = _stockRepo.GetAll().ToList();
+
+        if (!stock.Any())
+        {
+            Console.WriteLine("Ingen produkter fundet.");
+            Console.ReadKey();
+            return;
+        }
+
+        string[] stockOptions = stock.Select(s => $"{s.Product.Name} ({(s.IsActive ? "Aktiv" : "Inaktiv")})").ToArray();
+        int choice = ShowInteractiveMenu(stockOptions);
+        Stock selectedStock = stock[choice - 1];
+
+        selectedStock.ToggleStockActivity();
+        _stockRepo.Update(selectedStock);
+
+        Console.WriteLine($"\n✓ '{selectedStock.Product.Name}' er nu {(selectedStock.IsActive ? "aktiv" : "inaktiv")}.");
         Console.ReadKey();
     }
 }
