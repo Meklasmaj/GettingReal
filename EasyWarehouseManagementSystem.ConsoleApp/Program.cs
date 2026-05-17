@@ -13,8 +13,8 @@ class Program
     private static IGenericRepo<DraftOrder> draftOrderRepo = new JsonRepo<DraftOrder>("draftOrders.json");
     public static Menu MainMenu = new MainMenu(CheckDraftOrderNotifications());
     // Needs new methods
-    public static Menu ProductMenu = new MainMenu(CheckDraftOrderNotifications());
-    public static Menu StockMenu = new StockMenu(CheckLowStockNotifications());
+    public static Menu ProductMenu = new ProductMenu(productRepo, stockRepo, new CategoryRepo());
+    public static Menu StockMenu = new MainMenu(CheckDraftOrderNotifications());
     public static Menu SupplierMenu = new MainMenu(CheckDraftOrderNotifications());
     public static Menu DraftOrderMenu = new MainMenu(CheckDraftOrderNotifications());
     

@@ -3,7 +3,7 @@ using EasyWarehouseManagementSystem.Core.Interfaces;
 
 namespace EasyWarehouseManagementSystem.Core.Repositories;
 
-public class JsonRepo<T> : IGenericRepo<T> where T : IHasId
+public class JsonRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
 {
     private string _filePath;
     private int _id = 0;
@@ -63,7 +63,7 @@ public class JsonRepo<T> : IGenericRepo<T> where T : IHasId
     public void Add(T item)
     {
         List<T> items = GetAll().ToList();
-        _id = items.Max(p => p.Id) + 1;
+        _id = items.Any() ? items.Max(p => p.Id) + 1 : 1;
         item.Id = _id;
         items.Add(item);
         Save(items);
@@ -115,7 +115,7 @@ public class JsonRepo<T> : IGenericRepo<T> where T : IHasId
 
     public IEnumerable<T> Search(string term)
     {
-        //Needs functionality after SearchEngine
-        return new List<T>();
+        string[] terms = term.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return GetAll().Where(item => terms.All(t => item.GetSearchableText().ToLower().Contains(t)));
     }
 }
