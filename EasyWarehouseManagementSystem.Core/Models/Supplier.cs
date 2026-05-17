@@ -37,7 +37,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         // ToString method to display the supplier information
         public override string ToString()
         {
-            return $"Leverandør ID: {Id} | Navn: {Name} | Mærker: {string.Join(", ", Brands ?? Enumerable.Empty<string>())} | Minimumsordre: {LowerDeliveryLimit} kr.";
+            return $"Navn: {Name} | Mærker: {string.Join(", ", Brands ?? Enumerable.Empty<string>())} | Minimumsordre: {LowerDeliveryLimit} kr.";
         }
 
         public string GetSearchableText()
