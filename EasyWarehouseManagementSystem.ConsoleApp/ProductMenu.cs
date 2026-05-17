@@ -120,12 +120,14 @@ public class ProductMenu : Menu
 
         ShowHeader("Opret produkt - Vælg popularitet");
         int popularityChoice = ShowInteractiveMenu(["Ikke populær", "Populær", "Meget populær"]);
+        if (popularityChoice == -1) return;
         Popularity popularity = (Popularity)(popularityChoice - 1);
 
         ShowHeader("Opret produkt - Vælg kategori");
         List<Category> categories = _categoryRepo.GetCategories().ToList();
         string[] categoryOptions = categories.Select(c => c.Name).ToArray();
         int categoryChoice = ShowInteractiveMenu(categoryOptions);
+        if (categoryChoice == -1) return;
         Category selectedCategory = categories[categoryChoice - 1];
 
         Product product = new Product(name, 0, price, popularity, selectedCategory, productNumber);
