@@ -1,10 +1,6 @@
 ﻿using EasyWarehouseManagementSystem.Core.Interfaces;
 using EasyWarehouseManagementSystem.Core.Models;
 using EasyWarehouseManagementSystem.Core.Repositories;
-using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EasyWarehouseManagementSystem.ConsoleApp;
 
@@ -15,12 +11,20 @@ public class ProductMenu : Menu
     private IGenericRepo<Stock> _stockRepo;
     private CategoryRepo _categoryRepo;
 
+    // Table widths
+    private static int colNumber = 15;
+    private static int colName = 25;
+    private static int colPrice = 16;
+    private static int colPopularity = 16;
+    private static int totalWidth = colNumber + colName + colPrice + colPopularity;
+
     public ProductMenu(IGenericRepo<Product> productRepo, IGenericRepo<Stock> stockRepo, CategoryRepo categoryRepo)
     {
         _productRepo = productRepo;
         _stockRepo = stockRepo;
         _categoryRepo = categoryRepo;
     }
+
     public override void ShowMenu()
     {
         bool running = true;
@@ -52,83 +56,144 @@ public class ProductMenu : Menu
             }
         }
     }
+
+    // Builds a simple header with title
+    private void BuildHeader(string title)
+    {
+        Console.Clear();
+        int dashCount = totalWidth - title.Length - 4;
+        Console.WriteLine($"{DimCyan}┌──{Cyan}{title}{DimCyan}{new string('─', dashCount)}┐{Reset}");
+        Console.WriteLine($"{DimCyan}└{new string('─', totalWidth - 2)}┘{Reset}");
+    }
+
+    // Waits for Escape input
+    private void WaitForEscape()
+    {
+        Console.WriteLine($"\n{Gray}  Tryk Esc for at vende tilbage...{Reset}");
+        while (true)
+        {
+            if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                break;
+        }
+    }
+
+    // Shows all products grouped by category
     private void ShowAllProducts()
     {
         Console.Clear();
         IEnumerable<Product> products = _productRepo.GetAll();
 
+        BuildHeader("Se alle produkter");
+
+        Console.WriteLine($"\n  {Bold}{Gray}{"Varenr.".PadRight(colNumber)}{"Varenavn".PadRight(colName)}{"Pris".PadRight(colPrice)}{"Popularitet".PadRight(colPopularity)}Antal{Reset}");
+        Console.WriteLine($"  {new string('─', totalWidth + 6)}");
+
         if (!products.Any())
         {
-            Console.WriteLine("Ingen produkter fundet.");
-            Console.ReadKey();
+            Console.WriteLine($"  {Gray}Ingen produkter fundet.{Reset}");
+            WaitForEscape();
             return;
         }
 
-        // Group products by category
         var grouped = products.GroupBy(p => p.Category.Name);
-
         foreach (var group in grouped)
         {
-            Console.WriteLine($"\n--- {group.Key} ---");
+            Console.WriteLine($"\n  {Cyan}── {group.Key}{Reset}");
+            Console.WriteLine();
             foreach (var p in group)
             {
-                Console.WriteLine(p);
+                string popularity = p.Popularity switch
+                {
+                    Popularity.NotPopular => "Ikke populær",
+                    Popularity.Popular => "Populær",
+                    Popularity.VeryPopular => "Meget populær",
+                    _ => "Ukendt"
+                };
+
+                Stock? stock = _stockRepo.GetAll().FirstOrDefault(s => s.Product.Id == p.Id);
+                string amount = stock != null ? $"{stock.Amount} stk." : "Ukendt";
+
+                Console.WriteLine($"  {White}{p.ProductNumber.PadRight(colNumber)}{Gray}{p.Name.PadRight(colName)}{Reset}{$"{p.Price:F2} kr.".PadRight(colPrice)}{popularity.PadRight(colPopularity)}{amount}");
             }
         }
-
-        Console.WriteLine("\nTryk på en tast for at fortsætte...");
-        Console.ReadKey();
+        WaitForEscape();
     }
 
     // Searches for products by name or product number
     private void SearchProduct()
     {
-        Console.Clear();
-        Console.Write("Søgeord: ");
+        BuildHeader("Søg efter produkt");
+        Console.Write($"\n  {Gray}Søgeord: {Reset}");
         string term = Console.ReadLine() ?? "";
 
         IEnumerable<Product> results = _productRepo.Search(term);
 
+        Console.WriteLine($"\n  {Bold}{Gray}{"Varenr.".PadRight(colNumber)}{"Varenavn".PadRight(colName)}{"Pris".PadRight(colPrice)}{"Popularitet".PadRight(colPopularity)}Antal{Reset}");
+        Console.WriteLine($"  {new string('─', totalWidth + 6)}");
+
         if (!results.Any())
         {
-            Console.WriteLine("Ingen produkter fundet.");
+            Console.WriteLine($"  {Gray}Ingen produkter fundet.{Reset}");
         }
         else
         {
-            foreach (Product p in results)
+            foreach (var p in results)
             {
-                Console.WriteLine(p);
+                string popularity = p.Popularity switch
+                {
+                    Popularity.NotPopular => "Ikke populær",
+                    Popularity.Popular => "Populær",
+                    Popularity.VeryPopular => "Meget populær",
+                    _ => "Ukendt"
+                };
+
+                Stock? stock = _stockRepo.GetAll().FirstOrDefault(s => s.Product.Id == p.Id);
+                string amount = stock != null ? $"{stock.Amount} stk." : "Ukendt";
+                string name = p.Name.Length > colName ? p.Name[..(colName - 1)] + "…" : p.Name;
+
+                Console.WriteLine($"  {White}{p.ProductNumber.PadRight(colNumber)}{Gray}{name.PadRight(colName)}{Reset}{$"{p.Price:F2} kr.".PadRight(colPrice)}{popularity.PadRight(colPopularity)}{amount}");
             }
         }
 
-        Console.WriteLine("\nTryk på en tast for at fortsætte...");
-        Console.ReadKey();
+        WaitForEscape();
     }
+
     // Creates a new product
     private void CreateProduct()
     {
-        ShowHeader("Opret produkt");
-        Console.Write("Produktnavn: ");
+        BuildHeader("Opret produkt");
+
+        Console.Write($"\n  {Gray}Produktnavn: {Reset}");
         string name = Console.ReadLine() ?? "";
         while (string.IsNullOrWhiteSpace(name))
         {
-            Console.WriteLine("Produktnavn må ikke være tomt. Prøv igen: ");
+            Console.WriteLine($"  {Red}Produktnavn må ikke være tomt. Prøv igen:{Reset}");
+            Console.Write($"  {Gray}Produktnavn: {Reset}");
             name = Console.ReadLine() ?? "";
         }
 
-        Console.Write("Produktnummer: ");
+        Console.Write($"  {Gray}Produktnummer: {Reset}");
         string productNumber = Console.ReadLine() ?? "";
         while (string.IsNullOrWhiteSpace(productNumber))
         {
-            Console.WriteLine("Produktnummer må ikke være tomt. Prøv igen: ");
+            Console.WriteLine($"  {Red}Produktnummer må ikke være tomt. Prøv igen:{Reset}");
+            Console.Write($"  {Gray}Produktnummer: {Reset}");
             productNumber = Console.ReadLine() ?? "";
         }
 
-        Console.Write("Pris: ");
+        Console.Write($"  {Gray}Pris: {Reset}");
         if (!double.TryParse(Console.ReadLine(), out double price))
         {
-            Console.WriteLine("Ugyldig pris.");
-            Console.ReadKey();
+            Console.WriteLine($"  {Red}Ugyldig pris.{Reset}");
+            WaitForEscape();
+            return;
+        }
+
+        Console.Write($"  {Gray}Antal på lager: {Reset}");
+        if (!int.TryParse(Console.ReadLine(), out int amount) || amount < 0)
+        {
+            Console.WriteLine($"  {Red}Ugyldigt antal.{Reset}");
+            WaitForEscape();
             return;
         }
 
@@ -147,37 +212,42 @@ public class ProductMenu : Menu
         Product product = new Product(name, 0, price, popularity, selectedCategory, productNumber);
         _productRepo.Add(product);
 
-        Stock stock = new Stock(0, product, 0);
+        // Creates a stock entry for the new product
+        Stock stock = new Stock(0, product, amount);
         _stockRepo.Add(stock);
 
-        Console.WriteLine($"\n✓ Produktet '{name}' er oprettet.");
-        Console.ReadKey();
+        BuildHeader("Opret produkt");
+        Console.WriteLine($"\n  {Green}✓ Produktet '{name}' er oprettet med {amount} stk. på lager.{Reset}");
+        WaitForEscape();
     }
+
     // Toggles a product's active status
     private void ToggleProductStatus()
     {
-        ShowHeader("Markér produkt inaktivt");
-        List<Stock> stock = _stockRepo.GetAll().ToList();
+        ShowHeader("Skift produktstatus");
+        List<Stock> stocks = _stockRepo.GetAll().ToList();
 
-        if (!stock.Any())
+        if (!stocks.Any())
         {
-            Console.WriteLine("Ingen produkter fundet.");
-            Console.ReadKey();
+            Console.WriteLine($"\n  {Gray}Ingen produkter fundet.{Reset}");
+            WaitForEscape();
             return;
         }
 
-        string[] stockOptions = stock.Select(s => $"{s.Product.Name} ({(s.IsActive ? "Aktiv" : "Inaktiv")})").ToArray();
+        string[] stockOptions = stocks.Select(s => $"{s.Product.Name} ({(s.IsActive ? "Aktiv" : "Inaktiv")})").ToArray();
         int choice = ShowInteractiveMenu(stockOptions);
         if (choice == -1) return;
-        Stock selectedStock = stock[choice - 1];
+        Stock selectedStock = stocks[choice - 1];
 
         selectedStock.ToggleStockActivity();
         _stockRepo.Update(selectedStock);
 
-        Console.WriteLine($"\n✓ '{selectedStock.Product.Name}' er nu {(selectedStock.IsActive ? "aktiv" : "inaktiv")}.");
-        Console.ReadKey();
+        ShowHeader("Skift produktstatus");
+        Console.WriteLine($"\n  {Green}✓ '{selectedStock.Product.Name}' er nu {(selectedStock.IsActive ? "aktiv" : "inaktiv")}.{Reset}");
+        WaitForEscape();
     }
-    // Method for deleting a product and its stock
+
+    // Deletes a product and its stock
     private void DeleteProduct()
     {
         ShowHeader("Slet produkt");
@@ -185,8 +255,8 @@ public class ProductMenu : Menu
 
         if (!products.Any())
         {
-            Console.WriteLine("Ingen produkter fundet.");
-            Console.ReadKey();
+            Console.WriteLine($"\n  {Gray}Ingen produkter fundet.{Reset}");
+            WaitForEscape();
             return;
         }
 
@@ -197,14 +267,14 @@ public class ProductMenu : Menu
 
         // Ask for confirmation before deleting
         ShowHeader("Slet produkt - Bekræft");
-        Console.WriteLine($"Er du sikker på at du vil slette '{selectedProduct.Name}'?");
-        int confirm = ShowInteractiveMenu(["Ja, slet produktet", "Nej, gå tilbage"]);
+        int confirm = ShowInteractiveMenu([$"Ja, slet '{selectedProduct.Name}'", "Nej, gå tilbage"]);
         if (confirm == -1 || confirm == 2) return;
 
         _productRepo.Delete(selectedProduct.Id);
         _stockRepo.Delete(selectedProduct.Id);
 
-        Console.WriteLine($"\n✓ '{selectedProduct.Name}' er slettet.");
-        Console.ReadKey();
+        ShowHeader("Slet produkt");
+        Console.WriteLine($"\n  {Green}✓ '{selectedProduct.Name}' er slettet.{Reset}");
+        WaitForEscape();
     }
 }
