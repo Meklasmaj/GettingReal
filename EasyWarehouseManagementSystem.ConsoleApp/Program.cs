@@ -45,11 +45,43 @@ class Program
     public static int CheckLowStockNotifications()
     {
         int num = 0;
+        IEnumerable<DraftOrder> draftOrders = draftOrderRepo.GetAll();
+        draftOrders.Reverse();
         foreach (var stock in stockRepo.GetAll())
         {
             if (stock.IsBelowMinStock())
             {
                 num++;
+
+                foreach (var supplier in supplierRepo.GetAll())
+                {
+                    foreach (var brand in supplier.GetBrands())
+                    {
+                        if (stock.Product.Name.ToLower().Contains(brand.ToLower()))
+                        {
+                            if (draftOrders.Any(f => f.IsOpen()) &&
+                                draftOrders.Any(f => f.Supplier == supplier))
+                            {
+                                DraftOrder draft =
+                                    draftOrders.FirstOrDefault(f => f.Supplier == supplier && f.IsOpen());
+                                draft.OrderLines.Add(new OrderLine(stock));
+                                draftOrderRepo.Update(draft);
+                            }
+                            else
+                            {
+                                List<OrderLine> orderLines = new List<OrderLine>() { new OrderLine(stock) };
+                                DraftOrder draft = new DraftOrder(0, OrderStatus.Open, orderLines, supplier, DateTime.Now);
+                                draftOrderRepo.Add(draft);
+                            }
+                        }
+                    }
+                }
+                
+                // For hver supplier, get brands
+                // For hvert brand, hvis brand contained in product name
+                // Hvis draftorder med supplier ikke ekisisterer
+                // Add DraftOrder with supplier
+                // Ellers tilføj product til draftorder via ordrelinje
             }
         }
         return num;
