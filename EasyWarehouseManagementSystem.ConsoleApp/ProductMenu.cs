@@ -150,7 +150,15 @@ public class ProductMenu : Menu
         Stock stock = new Stock(0, product, 0);
         _stockRepo.Add(stock);
 
-        Console.WriteLine($"\n✓ Produktet '{name}' er oprettet.");
+        Console.Write("Antal på lager: ");
+        if (int.TryParse(Console.ReadLine(), out int amount) && amount >= 0)
+        {
+            stock.EditStockAmount(amount);
+            _stockRepo.Update(stock);
+        }
+
+        ShowHeader("Opret produkt");
+        Console.WriteLine($"Produktet '{name}' er oprettet.");
         Console.ReadKey();
     }
     // Toggles a product's active status
