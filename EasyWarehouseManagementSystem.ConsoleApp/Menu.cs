@@ -29,7 +29,7 @@ public abstract class Menu
         Console.Clear();
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        int width = 52;
+        int width = 65;
         string line = new string('─', width - 2);
 
         Console.WriteLine($"{Cyan}┌{line}┐{Reset}");
@@ -45,7 +45,7 @@ public abstract class Menu
     //  Footer with navigation-hint ==============================
     protected void ShowFooter()
     {
-        int width = 52;
+        int width = 65;
         string line = new string('─', width - 2);
         Console.WriteLine($"{Cyan}├{line}┤{Reset}");
         Console.WriteLine($"{Cyan}│{Reset}{Gray}  ▲ ▼ Naviger  {Reset}{Cyan}│{Reset}{Gray}  Enter = Vælg  {Reset}{Cyan}│{Reset}{Gray}  Esc = Tilbage  {Reset}{Cyan}│{Reset}");
@@ -57,7 +57,7 @@ public abstract class Menu
     {
         Console.CursorVisible = false;
 
-        int width = 52;
+        int width = 65;
         int menuChoice = 1;
         int count = options.Length;
         string selected = "\e[1;92m"; // Color

@@ -1,19 +1,27 @@
-﻿using EasyWarehouseManagementSystem.Core.Interfaces;
+﻿using System.Text.Json.Serialization;
+using EasyWarehouseManagementSystem.Core.Interfaces;
 
 namespace EasyWarehouseManagementSystem.Core.Models;
 
-public class OrderLine : IHasId
+public class OrderLine
 {
-    public int Id { get; set; }
     public int Amount { get; private set; }
     public Stock? Stock { get; private set; }
     
-    public OrderLine(){}
+    [JsonConstructor]
 
     public OrderLine(Stock stock)
     {
         Amount = stock.Product.Category.MinOrderAmount;
         Stock = stock;
+    }
+
+    public void EditAmount(int newAmount)
+    {
+        if(newAmount > 0)
+        {
+            Amount = newAmount;
+        }
     }
 
     public override string ToString()

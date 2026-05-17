@@ -2,17 +2,11 @@
 
 public class MainMenu : Menu
 {
-    private static int _draftOrderNotifications;
-    public MainMenu(int draftOrderNotifications)
-    {
-        _draftOrderNotifications = draftOrderNotifications;
-    }
-
     public override void ShowMenu()
     {
         ShowHeader("Hovedmenu");
         // The menu text
-        string[] Options = [$"Kladdeordrer : {_draftOrderNotifications}", "Lager", "Produkter", "Leverandører"];
+        string[] Options = [$"Kladdeordrer", "Lager", "Produkter", "Leverandører"];
         int choice = ShowInteractiveMenu(Options);
 
         switch (choice)

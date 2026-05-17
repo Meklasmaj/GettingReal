@@ -11,12 +11,11 @@ class Program
     private static IGenericRepo<Stock> stockRepo = new JsonRepo<Stock>("stocks.json");
     private static IGenericRepo<Supplier> supplierRepo = new JsonRepo<Supplier>("suppliers.json");
     private static IGenericRepo<DraftOrder> draftOrderRepo = new JsonRepo<DraftOrder>("draftOrders.json");
-    public static Menu MainMenu = new MainMenu(CheckDraftOrderNotifications());
-    // Needs new methods
+    public static Menu MainMenu = new MainMenu();
     public static Menu ProductMenu = new ProductMenu(productRepo, stockRepo, new CategoryRepo());
     public static Menu StockMenu = new StockMenu(CheckLowStockNotifications(), productRepo, stockRepo, new CategoryRepo());
     public static Menu SupplierMenu = new SupplierMenu(supplierRepo);
-    public static Menu DraftOrderMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu DraftOrderMenu = new DraftOrderMenu(draftOrderRepo, stockRepo);
     
     static void Main(string[] args)
     {
@@ -46,43 +45,58 @@ class Program
     public static int CheckLowStockNotifications()
     {
         int num = 0;
-        IEnumerable<DraftOrder> draftOrders = draftOrderRepo.GetAll();
-        draftOrders.Reverse();
-        foreach (var stock in stockRepo.GetAll())
+        List<DraftOrder> draftOrders = draftOrderRepo.GetAll().ToList();
+        List<Supplier> suppliers = supplierRepo.GetAll().ToList();
+        List<Stock> stocks = stockRepo.GetAll().ToList();
+        
+        // Make Dictionary from brands and suppliers, Key: Brand, Value: Supplier
+        Dictionary<string, Supplier> brandToSupplier = suppliers.SelectMany(s => s.GetBrands()
+                .Select(b => (Brand: b.ToLower(), Supplier: s)))
+            .ToDictionary(x => x.Brand, x => x.Supplier);
+        
+        // Make Dictionary from supplier and draftorder, Key: Supplier, Value: DraftOrder
+        Dictionary<int, DraftOrder> openDraftsBySupplier = draftOrders.Where(d => d
+            .IsOpen()).ToDictionary(d => d.Supplier.Id);
+        
+        foreach (var stock in stocks.Where(s => s.IsBelowMinStock()))
         {
-            if (stock.IsBelowMinStock())
-            {
-                num++;
+            num++;
 
-                foreach (var supplier in supplierRepo.GetAll())
+            string productName = stock.Product.Name.ToLower();
+            
+            // Find matching supplier using the dictionary
+            Supplier matchedSupplier = brandToSupplier
+                .FirstOrDefault(p => productName.Contains(p.Key)).Value;
+
+            // If non matches, skip
+            if (matchedSupplier == null)
+            {
+                continue;
+            }
+
+            // Find matching DraftOrder by Supplier and add new orderline
+            if (openDraftsBySupplier.TryGetValue(matchedSupplier.Id, out var existingDraft))
+            {
+                bool isAlreadyOnDraft = existingDraft.OrderLines.Any(o => o.Stock.Product.Name == stock.Product.Name);
+                if (!isAlreadyOnDraft)
                 {
-                    foreach (var brand in supplier.GetBrands())
-                    {
-                        if (stock.Product.Name.ToLower().Contains(brand.ToLower()))
-                        {
-                            if (draftOrders.Any(f => f.IsOpen()) &&
-                                draftOrders.Any(f => f.Supplier == supplier))
-                            {
-                                DraftOrder draft =
-                                    draftOrders.FirstOrDefault(f => f.Supplier == supplier && f.IsOpen());
-                                draft.OrderLines.Add(new OrderLine(stock));
-                                draftOrderRepo.Update(draft);
-                            }
-                            else
-                            {
-                                List<OrderLine> orderLines = new List<OrderLine>() { new OrderLine(stock) };
-                                DraftOrder draft = new DraftOrder(0, OrderStatus.Open, orderLines, supplier, DateTime.Now);
-                                draftOrderRepo.Add(draft);
-                            }
-                        }
-                    }
+                    existingDraft.OrderLines.Add(new OrderLine(stock));
+                    draftOrderRepo.Update(existingDraft);
                 }
-                
-                // For hver supplier, get brands
-                // For hvert brand, hvis brand contained in product name
-                // Hvis draftorder med supplier ikke ekisisterer
-                // Add DraftOrder with supplier
-                // Ellers tilføj product til draftorder via ordrelinje
+            }
+            // Create new DraftOrder and add orderline
+            else
+            {
+                DraftOrder newDraft = new DraftOrder
+                (
+                    0,
+                    OrderStatus.Open,
+                    new List<OrderLine>() { new OrderLine(stock) },
+                    matchedSupplier,
+                    DateTime.Now
+                );
+                draftOrderRepo.Add(newDraft);
+                openDraftsBySupplier[matchedSupplier.Id] = newDraft;
             }
         }
         return num;

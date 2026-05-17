@@ -9,19 +9,24 @@ namespace EasyWarehouseManagementSystem.Core.Models
         public int Id { get; set; }
         // public set is nessary for JSON deserialization. Encapsulation is handled by the application layer,
         // since the DraftOrder class is only used for creating new orders, and the properties are set at the time of creation.
+        private OrderStatus? _status;
         public OrderStatus? Status
         {
-            get;
+            get
+            {
+                return _status;
+            }
             set
             {
                 // Adds the new amount of products to the stock when Status is Done
-                if (value == OrderStatus.Done && OrderLines != null && OrderLines.Count > 0)
+                if (value == OrderStatus.Done && OrderLines != null && OrderLines.Count > 0 && _status != OrderStatus.Done)
                 {
                     foreach (var orderLine in OrderLines)
                     {
                         orderLine.Stock.EditStockAmount(orderLine.Amount + orderLine.Stock.Amount);
                     }
                 }
+                _status = value;
             }
         }
 
@@ -42,15 +47,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
 
         public override string ToString()
         {
-            string line = $"Ordre ID: {Id} | Oprettet: {TimeStamp} | Status: {Status} | Leverandør: {Supplier?.Name}";
-            if(OrderLines.Count > 0)
-            {
-                foreach (var orderLine in OrderLines)
-                {
-                    line += $" | Produkt: {orderLine.Stock.Product.Name}";
-                    line += $" | Antal: {orderLine.Stock.Product.Category.MinOrderAmount}";
-                }
-            }
+            string line = $"{Supplier?.Name} | {TimeStamp} | Status: {_status}";
             return line;
         }
         public string GetSearchableText()
@@ -67,7 +64,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         }
         public bool IsOpen()
         {
-            return Status == OrderStatus.Open;
+            return _status == OrderStatus.Open;
         }
     }
 }
