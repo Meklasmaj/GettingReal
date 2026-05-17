@@ -20,7 +20,7 @@ public class InMemoryRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
 
     public void Add(T item)
     {
-        _id = _items.Max(p => p.Id) + 1;
+        _id = _items.Any() ? _items.Max(p => p.Id) + 1 : 1;
         item.Id = _id;
         _items.Add(item);
     }
