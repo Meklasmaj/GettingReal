@@ -15,7 +15,7 @@ class Program
     // Needs new methods
     public static Menu ProductMenu = new ProductMenu(productRepo, stockRepo, new CategoryRepo());
     public static Menu StockMenu = new StockMenu(CheckLowStockNotifications(), productRepo, stockRepo, new CategoryRepo());
-    public static Menu SupplierMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu SupplierMenu = new SupplierMenu(supplierRepo);
     public static Menu DraftOrderMenu = new MainMenu(CheckDraftOrderNotifications());
     
     static void Main(string[] args)

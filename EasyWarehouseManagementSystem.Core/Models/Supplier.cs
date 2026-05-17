@@ -12,7 +12,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
 
         // Constructor for the Supplier class
         [JsonConstructor] // This attribute allows the constructor to be used during JSON deserialization, since we have private setters for the properties.
-        public Supplier(int id, string name, List<string> brands, double lowerDeliveryLimit)
+        public Supplier(int id, string? name, List<string>? brands, double? lowerDeliveryLimit)
         {
             Id = id;
             Name = name;
