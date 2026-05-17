@@ -22,6 +22,8 @@ public abstract class Menu
     protected const string Magenta  = "\e[95m";
     protected const string Blue     = "\e[94m";
     protected const string Yellow   = "\e[93m";
+    
+    protected const int menuWidth = 65;
 
     // Header with logo and title ==============================
     protected void ShowHeader(string title)
@@ -29,15 +31,23 @@ public abstract class Menu
         Console.Clear();
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        int width = 65;
-        string line = new string('─', width - 2);
+        string line = new string('─', menuWidth - 2);
+
+        string visibleText = "[ EZ ] Warehouse Management System";
+        string headerText = $"{Bold}{Gray}[ EZ ] {White}Warehouse Management System{Reset}";
+
+        int totalPadding = menuWidth - 2 - visibleText.Length;
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+
+        string centeredHeader = new string(' ', leftPadding) + headerText + new string(' ', rightPadding);
 
         Console.WriteLine($"{Cyan}┌{line}┐{Reset}");
-        Console.WriteLine($"{Cyan}│{Reset}{Bold}{Gray}        [ EZ ] {White}Warehouse Management System        {Reset}{Cyan}│{Reset}");
+        Console.WriteLine($"{Cyan}│{Reset}{centeredHeader}{Cyan}│{Reset}");
         Console.WriteLine($"{Cyan}├{line}┤{Reset}");
 
         // Titel på aktuel menu
-        string paddedTitle = title.PadRight(width - 4);
+        string paddedTitle = title.PadRight(menuWidth - 4);
         Console.WriteLine($"{Cyan}│{Reset}  {Bold}{White}{paddedTitle}{Reset}{Cyan}│{Reset}");
         Console.WriteLine($"{Cyan}├{line}┤{Reset}");
     }
@@ -45,10 +55,19 @@ public abstract class Menu
     //  Footer with navigation-hint ==============================
     protected void ShowFooter()
     {
-        int width = 65;
-        string line = new string('─', width - 2);
+        string line = new string('─', menuWidth - 2);
+
+        string visibleFooter = "▲ ▼ Naviger   │   Enter = Vælg   │   Esc = Tilbage";
+        string footerText = $"{Gray}▲ ▼ Naviger   {Reset}{Cyan}│{Reset}{Gray}   Enter = Vælg   {Reset}{Cyan}│{Reset}{Gray}   Esc = Tilbage{Reset}";
+
+        int totalPadding = menuWidth - 2 - visibleFooter.Length;
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+
+        string centeredFooter = new string(' ', leftPadding) + footerText + new string(' ', rightPadding);
+
         Console.WriteLine($"{Cyan}├{line}┤{Reset}");
-        Console.WriteLine($"{Cyan}│{Reset}{Gray}  ▲ ▼ Naviger  {Reset}{Cyan}│{Reset}{Gray}  Enter = Vælg  {Reset}{Cyan}│{Reset}{Gray}  Esc = Tilbage  {Reset}{Cyan}│{Reset}");
+        Console.WriteLine($"{Cyan}│{Reset}{centeredFooter}{Cyan}│{Reset}");
         Console.WriteLine($"{Cyan}└{line}┘{Reset}");
     }
 

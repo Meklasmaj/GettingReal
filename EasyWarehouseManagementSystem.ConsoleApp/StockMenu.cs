@@ -45,10 +45,7 @@ public class StockMenu : Menu
                 ShowLowStock();
                 break;
             case 3:
-                Program.ProductMenu.ShowMenu();
-                break;
-            case 4:
-                Program.SupplierMenu.ShowMenu();
+                PrintStockList();
                 break;
         }
     }
@@ -76,6 +73,22 @@ public class StockMenu : Menu
         Console.WriteLine(divider);
     }
 
+    // Footer Builder: prints a footer with navigation hint and waits for Esc key to return to menu
+    private void BuildStockTableFooter()
+    {
+        Console.WriteLine($"{DimCyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
+        Console.WriteLine($"\n{Gray}  Tryk Esc for at vende tilbage...{Reset}");
+
+        while (true)
+        {
+            if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+            {
+                ShowMenu();
+                break;
+            }
+        }
+    }
+
     // Searches for a product by name or product number and displays its stock information, including current quantity and minimum stock level, with color coding for low stock
     private void SearchProduct()
     {
@@ -83,34 +96,69 @@ public class StockMenu : Menu
         BuildHeader("Søg produkt");
 
         Console.Write("   Indtast søgeord: ");
-        string term = Console.ReadLine() ?? "";
+        string term;
+
+        if (Console.ReadKey().Key == ConsoleKey.Escape)
+        {
+            ShowMenu();
+            return;
+        }
+
+        term = Console.ReadLine() ?? "";
 
         IEnumerable<Product> results = _productRepo.Search(term);
-        // var stock = _stockRepo.Get(product.Id);
+        var stockResults = _stockRepo.GetAll().Where(s => results.Any(r => r.Id == s.Product.Id)); // Finder lagerbeholdningen for de fundne produkter
 
         BuildStockTable("Søgeresultater");
         if (!results.Any())
         {
-            string msg = "Ingen produkter fundet";
+            string msg = "Ingen produkter fundet...";
             Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
         }
-        //else if (stock == null)
-        //{
-        //    string msg = "Ingen lagerinformation tilgængelig for dette produkt.";
-        //    Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
-        //}
-        //else {
-        //Console.WriteLine($"Produkt: {product.Name}");
-        //Console.WriteLine($"Varenr.: {product.ProductNumber}");
-        //Console.WriteLine($"Antal på lager: {stock.Amount}");
-        //Console.WriteLine($"Minimumsbeholdning: {stock.Product.Category.MinStockAmount}");
-        //if (stock.IsBelowMinStock())
-        //{
-        //    Console.WriteLine($"{Red}Advarsel: Produktet er under minimumsbeholdning!{Reset}");
-        //}
-        //    BuildStockTableFooter();
-        //    return;
+        else if (!stockResults.Any())
+        {
+            string msg = "Ingen lagerinformation tilgængelig for dette produkt.";
+            Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
+        }
+        else
+        {
+            foreach (var stock in stockResults)
+            {
+                var product = _productRepo.Get(stock.Id);
+                string id = product.ProductNumber.ToString();
+                string name = product.Name.Length > colName - 1         // Tjekker om produktnavnet er længere end kolonnebredden, og forkorter det med "…" hvis det er tilfældet
+                               ? product.Name[..(colName - 2)] + "…"
+                               : product.Name;
+                string qty = stock.Amount.ToString();
+                string min = stock.Product.Category.MinStockAmount.ToString();
 
+                // Rød farve hvis kritisk lav (under halvdelen af minimum)
+                string rowColor = stock.Amount <= stock.Product.Category.MinStockAmount / 2 ? Red : Yellow;    // Tjekker om lagerbeholdningen er kritisk lav (under halvdelen af minimumsbeholdningen) og sætter farven til rød, ellers gul
+                Console.WriteLine(
+                    $"{DimCyan}│{Reset} {rowColor}{id.PadRight(colId - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{name.PadRight(colName - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{qty.PadRight(colQty - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{min.PadRight(colMin - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset}"
+                );
+                if (stockResults.Last() != stock)
+                {
+                    Console.WriteLine(divider);
+                }
+            }
+        }
+        Console.WriteLine($"{DimCyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
+        Console.WriteLine("\n   Vil du ændre beholdningen på et produkt?\n   Enter = Ja  |  Escape = Nej");
+
+        if (Console.ReadKey().Key == ConsoleKey.Enter)
+        {
+            EditStock(stockResults);
+        }
+        else
+        {
+            ShowMenu();
+            return;
+        }
     }
 
     // Shows a list of products that are under their category's minimum stock level, with color coding for critical levels and a clear table format
@@ -146,22 +194,205 @@ public class StockMenu : Menu
                     $"{DimCyan}│{Reset} {rowColor}{min.PadRight(colMin - 1)}{Reset}" +
                     $"{DimCyan}│{Reset}"
                 );
+                if (lowStockItems.Last() != stock)
+                {
+                    Console.WriteLine(divider);
+                }
             }
         }
         BuildStockTableFooter();
     }
-    private void BuildStockTableFooter()
+    private void PrintStockList()
     {
-        Console.WriteLine($"{DimCyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
-        Console.WriteLine($"\n{Gray}  Tryk Esc for at vende tilbage...{Reset}");
+        Console.Clear();
+        BuildStockTable("Lagerliste");
+        var stockItems = _stockRepo.GetAll().ToList();
+        if (!stockItems.Any())
+        {
+            string msg = "Ingen lagerinformation tilgængelig.";
+            Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
+        }
+        else
+        {
+            foreach (var stock in stockItems)
+            {
+                var product = _productRepo.Get(stock.Id);
+                string id = product.ProductNumber.ToString();
+                string name = product.Name.Length > colName - 1         // Tjekker om produktnavnet er længere end kolonnebredden, og forkorter det med "…" hvis det er tilfældet
+                               ? product.Name[..(colName - 2)] + "…"
+                               : product.Name;
+                string qty = stock.Amount.ToString();
+                string min = stock.Product.Category.MinStockAmount.ToString();
+                // Rød farve hvis kritisk lav (under halvdelen af minimum)
+                string rowColor = stock.Amount <= stock.Product.Category.MinStockAmount / 2 ? Red : Yellow;    // Tjekker om lagerbeholdningen er kritisk lav (under halvdelen af minimumsbeholdningen) og sætter farven til rød, ellers gul
+                Console.WriteLine(
+                    $"{DimCyan}│{Reset} {rowColor}{id.PadRight(colId - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{name.PadRight(colName - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{qty.PadRight(colQty - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset} {rowColor}{min.PadRight(colMin - 1)}{Reset}" +
+                    $"{DimCyan}│{Reset}"
+                );
+                if (stockItems.Last() != stock)
+                {
+                    Console.WriteLine(divider);
+                }
+            }
+        }
+        BuildStockTableFooter();
+    }
+    private void EditStock(IEnumerable<Stock> stockResults)
+    {
+        // ── Trin 1: Naviger til produkt med piletaster ──────────────────────
+        var stocks = stockResults.ToList();
+        int selected = 0;
 
         while (true)
         {
-            if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+            Console.Clear();
+            BuildHeader("Rediger lagerbeholdning");
+            Console.WriteLine($"{Gray}  Vælg produkt med ▲ ▼ og tryk Enter{Reset}\n");
+
+            for (int i = 0; i < stocks.Count; i++)
+            {
+                var s = stocks[i];
+                string name = s.Product.Name.Length > 30
+                    ? s.Product.Name[..29] + "…"
+                    : s.Product.Name;
+                string qty = s.Amount.ToString();
+                string min = s.Product.Category.MinStockAmount.ToString();
+                string rowColor = s.Amount <= s.Product.Category.MinStockAmount / 2 ? Red : Yellow;
+
+                if (i == selected)
+                    Console.WriteLine($"{Bold}{White}  ► {name.PadRight(30)} Antal: {qty.PadRight(6)} Min: {min}{Reset}");
+                else
+                    Console.WriteLine($"{Gray}    {name.PadRight(30)} Antal: {qty.PadRight(6)} Min: {min}{Reset}");
+            }
+
+            ShowFooter();
+
+            var key = Console.ReadKey(true).Key;
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    selected = selected == 0 ? stocks.Count - 1 : selected - 1;
+                    break;
+                case ConsoleKey.DownArrow:
+                    selected = selected == stocks.Count - 1 ? 0 : selected + 1;
+                    break;
+                case ConsoleKey.Enter:
+                    goto EditSelected;
+                case ConsoleKey.Escape:
+                    ShowMenu();
+                    return;
+            }
+        }
+
+    EditSelected:
+
+        // ── Trin 2: Vis nuværende status og indtast nyt antal ───────────────
+        var stock = stocks[selected];
+        var product = stock.Product;
+
+        Console.Clear();
+        BuildHeader("Rediger lagerbeholdning");
+
+        int colW = 46;
+        Console.WriteLine($"{DimCyan}┌{new string('─', colW)}┐{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset} {Bold}{White}{"Produkt:",-12}{Reset}{product.Name.PadRight(colW - 13)}{DimCyan}│{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset} {Bold}{White}{"Varenr.:",-12}{Reset}{product.ProductNumber.ToString().PadRight(colW - 13)}{DimCyan}│{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset} {Bold}{White}{"Antal:",-12}{Reset}{stock.Amount.ToString().PadRight(colW - 13)}{DimCyan}│{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset} {Bold}{White}{"Min. beh.:",-12}{Reset}{product.Category.MinStockAmount.ToString().PadRight(colW - 13)}{DimCyan}│{Reset}");
+        Console.WriteLine($"{DimCyan}└{new string('─', colW)}┘{Reset}");
+
+        // ── Trin 3: Indtast nyt antal (kun int tilladt) ─────────────────────
+        int newAmount = -1;
+        while (true)
+        {
+            Console.Write($"\n  {White}Indtast nyt antal: {Reset}");
+            string input = ReadIntOnly();
+
+            if (input == null) // Escape trykket
             {
                 ShowMenu();
+                return;
+            }
+
+            if (int.TryParse(input, out int parsed) && parsed >= 0)
+            {
+                newAmount = parsed;
                 break;
             }
+
+            Console.WriteLine($"{Red}  Ugyldigt antal – indtast et helt tal større end eller lig med 0{Reset}");
+        }
+
+        // ── Trin 4: Verificering ────────────────────────────────────────────
+        Console.Clear();
+        BuildHeader("Bekræft ændring");
+
+        Console.WriteLine($"\n  {White}Produkt:{Reset}  {product.Name}");
+        Console.WriteLine($"  {White}Gammelt antal:{Reset}  {stock.Amount}");
+        Console.WriteLine($"  {Green}Nyt antal:{Reset}     {newAmount}\n");
+        Console.WriteLine($"  {Yellow}Er du sikker? Enter = Bekræft  |  Escape = Annullér{Reset}");
+
+        var confirm = Console.ReadKey(true).Key;
+        if (confirm == ConsoleKey.Enter)
+        {
+            //stock.Amount = newAmount;
+            _stockRepo.Update(stock);
+            Console.Clear();
+            BuildHeader("Rediger lagerbeholdning");
+            Console.WriteLine($"\n  {Green}✓ Lagerbeholdning opdateret til {newAmount} stk.{Reset}");
+            Console.WriteLine($"\n  {Gray}Tryk en tast for at fortsætte...{Reset}");
+            Console.ReadKey(true);
+        }
+        else
+        {
+            Console.WriteLine($"\n  {Gray}Ændring annulleret.{Reset}");
+            Console.WriteLine($"\n  {Gray}Tryk en tast for at fortsætte...{Reset}");
+            Console.ReadKey(true);
+        }
+
+        ShowMenu();
+    }
+
+    // ── Hjælpemetode: Læs kun cifre og tillad Escape ───────────────────────────
+    private string ReadIntOnly()
+    {
+        var input = new System.Text.StringBuilder();
+        Console.CursorVisible = true;
+
+        while (true)
+        {
+            var keyInfo = Console.ReadKey(true);
+
+            if (keyInfo.Key == ConsoleKey.Escape)
+            {
+                Console.CursorVisible = false;
+                return null;
+            }
+
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.CursorVisible = false;
+                Console.WriteLine();
+                return input.ToString();
+            }
+
+            if (keyInfo.Key == ConsoleKey.Backspace && input.Length > 0)
+            {
+                input.Remove(input.Length - 1, 1);
+                Console.Write("\b \b");
+                continue;
+            }
+
+            // Tillad kun cifre
+            if (char.IsDigit(keyInfo.KeyChar))
+            {
+                input.Append(keyInfo.KeyChar);
+                Console.Write(keyInfo.KeyChar);
+            }
+            // Ignorer alt andet (bogstaver, specialtegn osv.)
         }
     }
 }
