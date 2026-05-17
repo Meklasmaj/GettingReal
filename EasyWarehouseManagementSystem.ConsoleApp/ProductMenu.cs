@@ -25,7 +25,7 @@ public class ProductMenu : Menu
         bool running = true;
         while (running)
         {
-            Console.Clear();
+            ShowHeader("Produkter");
             int choice = ShowInteractiveMenu(Options);
 
             switch (choice)
