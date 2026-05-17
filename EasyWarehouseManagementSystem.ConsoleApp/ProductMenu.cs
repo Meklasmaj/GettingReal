@@ -164,6 +164,7 @@ public class ProductMenu : Menu
 
         string[] stockOptions = stock.Select(s => $"{s.Product.Name} ({(s.IsActive ? "Aktiv" : "Inaktiv")})").ToArray();
         int choice = ShowInteractiveMenu(stockOptions);
+        if (choice == -1) return;
         Stock selectedStock = stock[choice - 1];
 
         selectedStock.ToggleStockActivity();
