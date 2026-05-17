@@ -28,13 +28,15 @@ public class JsonRepo<T> : IGenericRepo<T> where T : IHasId, ISearchable
             if (File.Exists(_filePath))
             {
                 json = File.ReadAllText(_filePath);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    items = JsonSerializer.Deserialize<List<T>>(json);
+                }
             }
             else
             {
                 File.Create(_filePath).Close();
             }
-
-            items = JsonSerializer.Deserialize<List<T>>(json);
         }
         catch (FileNotFoundException e)
         {

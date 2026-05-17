@@ -25,7 +25,16 @@ public class Product : IHasId, ISearchable
     
     public override string ToString()
     {
-        return $"Produkt-navn : {Name} | Produkt-nummer : {ProductNumber} | Pris : {Price} |  Popularity : {Popularity} | Category : {Category.Name}";
+        // To convert the popularity enums to danish words
+        string popularityText = Popularity switch
+        {
+            Popularity.NotPopular => "Ikke populær",
+            Popularity.Popular => "Populær",
+            Popularity.VeryPopular => "Meget populær",
+            _ => "Ukendt"
+        };
+
+        return $"Produkt-navn : {Name} | Produkt-nummer : {ProductNumber} | Pris : {Price} |  Popularitet : {popularityText} | Kategori : {Category.Name}";
     }
 
     public string GetSearchableText()

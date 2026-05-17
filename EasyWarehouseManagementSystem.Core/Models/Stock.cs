@@ -12,13 +12,13 @@ namespace EasyWarehouseManagementSystem.Core.Models
         public bool IsActive { get; private set; }
 
         // The constructor for the Stock class
-        public Stock() { } // JsonConstructor for deserialization
-        public Stock(int id, Product product, int amount)
+        [JsonConstructor]
+        public Stock(int id, Product product, int amount, bool isActive = true)
         {
             Id = id;
             Product = product ?? throw new ArgumentNullException(nameof(product), "Produktet kan ikke være null.");
             Amount = amount;
-            IsActive = true;
+            IsActive = isActive;
         }
 
         // Method to edit the stock amount directly
