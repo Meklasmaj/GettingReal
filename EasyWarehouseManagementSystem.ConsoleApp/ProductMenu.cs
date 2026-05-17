@@ -9,7 +9,7 @@ namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 public class ProductMenu : Menu
 {
-    private static readonly string[] Options = ["Se alle produkter", "Søg efter produkt", "Opret produkt", "Markér produkt inaktivt"];
+    private static readonly string[] Options = ["Se alle produkter", "Søg efter produkt", "Opret produkt", "Skift produktstatus"];
     private IGenericRepo<Product> _productRepo;
     private IGenericRepo<Stock> _stockRepo;
     private CategoryRepo _categoryRepo;
@@ -43,7 +43,7 @@ public class ProductMenu : Menu
                     CreateProduct();
                     break;
                 case 4:
-                    ToggleProductActive();
+                    ToggleProductStatus();
                     break;
             }
         }
@@ -150,7 +150,7 @@ public class ProductMenu : Menu
         Console.ReadKey();
     }
     // Toggles a product's active status
-    private void ToggleProductActive()
+    private void ToggleProductStatus()
     {
         ShowHeader("Markér produkt inaktivt");
         List<Stock> stock = _stockRepo.GetAll().ToList();
