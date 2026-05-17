@@ -16,6 +16,7 @@ public abstract class Menu
     protected const string Gray = "\e[90m";
     protected const string Green = "\e[92m";
     protected const string Cyan = "\e[96m";
+    protected const string DimCyan = "\e[2;96m";
     protected const string Red = "\e[1;91m";
     protected const string DimRed = "\e[2;91m";
     protected const string Magenta = "\e[95m";
@@ -75,8 +76,10 @@ public abstract class Menu
 
             ShowFooter();
             Console.WriteLine();
-            ShowNotifications(Program.CheckDraftOrderNotifications(), Program.CheckLowStockNotifications());
-
+            if (ShowHeader == Program.MainMenu.ShowHeader) // Tjekker om vi er i hovedmenuen, og viser notifikationer hvis det er tilfældet
+            {
+                ShowNotifications(Program.CheckDraftOrderNotifications(), Program.CheckLowStockNotifications());
+            }
             ConsoleKeyInfo key = Console.ReadKey(true);
 
             switch (key.Key)
