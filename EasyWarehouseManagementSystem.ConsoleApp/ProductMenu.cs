@@ -61,12 +61,12 @@ public class ProductMenu : Menu
         }
 
         // Group products by category
-        IEnumerable<IGrouping<string, Product>> grouped = products.GroupBy(p => p.Category.Name);
+        var grouped = products.GroupBy(p => p.Category.Name);
 
-        foreach (IGrouping<string, Product> group in grouped)
+        foreach (var group in grouped)
         {
             Console.WriteLine($"\n--- {group.Key} ---");
-            foreach (Product p in group)
+            foreach (var p in group)
             {
                 Console.WriteLine(p);
             }
