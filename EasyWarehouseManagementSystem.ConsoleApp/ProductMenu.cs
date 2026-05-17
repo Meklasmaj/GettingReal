@@ -106,9 +106,19 @@ public class ProductMenu : Menu
         ShowHeader("Opret produkt");
         Console.Write("Produktnavn: ");
         string name = Console.ReadLine() ?? "";
+        while (string.IsNullOrWhiteSpace(name))
+        {
+            Console.WriteLine("Produktnavn må ikke være tomt. Prøv igen: ");
+            name = Console.ReadLine() ?? "";
+        }
 
         Console.Write("Produktnummer: ");
         string productNumber = Console.ReadLine() ?? "";
+        while (string.IsNullOrWhiteSpace(productNumber))
+        {
+            Console.WriteLine("Produktnummer må ikke være tomt. Prøv igen: ");
+            productNumber = Console.ReadLine() ?? "";
+        }
 
         Console.Write("Pris: ");
         if (!double.TryParse(Console.ReadLine(), out double price))
