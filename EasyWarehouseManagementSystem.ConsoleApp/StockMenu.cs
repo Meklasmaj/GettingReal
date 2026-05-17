@@ -11,6 +11,14 @@ public class StockMenu : Menu
     private IGenericRepo<Stock> _stockRepo;
     private CategoryRepo _categoryRepo;
 
+    // Opsætter tabel bredder og divider
+    private static int colId = 15;
+    private static int colName = 28;
+    private static int colQty = 9;
+    private static int colMin = 18;
+    private static int totalWidth = colId + colName + colQty + colMin + 2;
+    private static string divider = $"{DimCyan}├{new string('─', colId)}┼{new string('─', colName)}┼{new string('─', colQty)}┼{new string('─', colMin)}┤{Reset}";
+
     public StockMenu(int lowStock, IGenericRepo<Product> productRepo, IGenericRepo<Stock> stockRepo, CategoryRepo categoryRepo)
     {
         _lowStockNotifications = lowStock;
@@ -31,7 +39,7 @@ public class StockMenu : Menu
             case -1:
                 return;
             case 1:
-                // SearchProduct();
+                SearchProduct();
                 break;
             case 2:
                 ShowLowStock();
@@ -45,29 +53,75 @@ public class StockMenu : Menu
         }
     }
 
+    // Header Builder: prints a simple header with the given title
+    private void BuildHeader(string title)
+    {
+        Console.Clear();
+
+        // Udskriver simple header
+        string headerLine = $"{Cyan}{title}{Reset}{DimCyan}" + new string('─', totalWidth - $"{title}".Length - 4);
+        Console.WriteLine($"{DimCyan}┌──{Reset}{headerLine}┐{Reset}");
+        Console.WriteLine($"{DimCyan}└{new string('─', totalWidth - 2)}┘{Reset}");
+    }
+
+    // TableBuilder: with dynamic title and column headers
+    private void BuildStockTable(string title)
+    {
+        Console.Clear();
+
+        // Udskriver tabel header
+        string headerLine = $"{Cyan}{title}{Reset}{DimCyan}" + new string('─', 75 - $"{title}".Length - 4);
+        Console.WriteLine($"{DimCyan}┌──{Reset}{headerLine}┐{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenr.").PadRight(colId - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenavn").PadRight(colName - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Antal").PadRight(colQty - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Min. beholdning").PadRight(colMin - 1)}{Reset}{DimCyan}│{Reset}");
+        Console.WriteLine(divider);
+    }
+
+    // Searches for a product by name or product number and displays its stock information, including current quantity and minimum stock level, with color coding for low stock
+    private void SearchProduct()
+    {
+        Console.Clear();
+        BuildHeader("Søg produkt");
+
+        Console.Write("   Indtast søgeord: ");
+        string term = Console.ReadLine() ?? "";
+
+        IEnumerable<Product> results = _productRepo.Search(term);
+        // var stock = _stockRepo.Get(product.Id);
+
+        BuildStockTable("Søgeresultater");
+        if (!results.Any())
+        {
+            string msg = "Ingen produkter fundet";
+            Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
+        }
+        //else if (stock == null)
+        //{
+        //    string msg = "Ingen lagerinformation tilgængelig for dette produkt.";
+        //    Console.WriteLine($"{DimCyan}│{Reset}{White} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
+        //}
+        //else {
+        //Console.WriteLine($"Produkt: {product.Name}");
+        //Console.WriteLine($"Varenr.: {product.ProductNumber}");
+        //Console.WriteLine($"Antal på lager: {stock.Amount}");
+        //Console.WriteLine($"Minimumsbeholdning: {stock.Product.Category.MinStockAmount}");
+        //if (stock.IsBelowMinStock())
+        //{
+        //    Console.WriteLine($"{Red}Advarsel: Produktet er under minimumsbeholdning!{Reset}");
+        //}
+        //    BuildStockTableFooter();
+        //    return;
+
+    }
+
     // Shows a list of products that are under their category's minimum stock level, with color coding for critical levels and a clear table format
     private void ShowLowStock()
     {
-        Console.Clear();
         var lowStockItems = _stockRepo.GetAll().Where(stock => stock.IsBelowMinStock()).ToList(); // Henter alle lagerbeholdninger og filtrerer dem, der er under minimumsbeholdning
 
-        // Opsætter tabel bredder og divider
-        int colId = 15;
-        int colName = 28;
-        int colQty = 9;
-        int colMin = 18;
-
-        string divider = $"{DimCyan}├{new string('─', colId)}┼{new string('─', colName)}┼{new string('─', colQty)}┼{new string('─', colMin)}┤{Reset}";
-
-        // Udskriver tabel header
-        string headerLine = $"{Cyan}Produkter under minimumsbeholdning{Reset}{DimCyan}" + new string('─', 75 - "Produkter under minimumsbeholdning".Length - 4);
-        Console.WriteLine($"{DimCyan}┌──{Reset}{headerLine}┐{Reset}");
-        Console.WriteLine($"{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenr.").PadRight(colId-1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenavn").PadRight(colName - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Antal").PadRight(colQty - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Min. beholdning").PadRight(colMin - 1)}{Reset}{DimCyan}│{Reset}");
-        Console.WriteLine(divider);
+        BuildStockTable("Produkter under minimumsbeholdning");
 
         if (!lowStockItems.Any())   // Tjekker om der er nogen produkter under minimumsbeholdning, og viser en besked hvis ikke
         {
-            int totalWidth = colId + colName + colQty + colMin + 2;
             string msg = "Ingen produkter under minimumsbeholdning";
             Console.WriteLine($"{DimCyan}│{Reset}{Green} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
         }
@@ -94,7 +148,10 @@ public class StockMenu : Menu
                 );
             }
         }
-
+        BuildStockTableFooter();
+    }
+    private void BuildStockTableFooter()
+    {
         Console.WriteLine($"{DimCyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
         Console.WriteLine($"\n{Gray}  Tryk Esc for at vende tilbage...{Reset}");
 
