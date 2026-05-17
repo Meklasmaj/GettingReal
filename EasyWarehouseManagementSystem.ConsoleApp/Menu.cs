@@ -76,7 +76,6 @@ public abstract class Menu
     {
         Console.CursorVisible = false;
 
-        int width = 65;
         int menuChoice = 1;
         int count = options.Length;
         string selected = "\e[1;92m"; // Color
@@ -90,7 +89,7 @@ public abstract class Menu
             for (int i = 0; i < count; i++)
             {
                 bool isSelected = (menuChoice == i + 1);
-                Console.WriteLine($"{Cyan}│{Reset}  {(isSelected ? selected + "►" : " ")} {options[i].PadRight(width - 6)}{Reset}{Cyan}│{Reset}");
+                Console.WriteLine($"{Cyan}│{Reset}  {(isSelected ? selected + "►" : " ")} {options[i].PadRight(menuWidth - 6)}{Reset}{Cyan}│{Reset}");
             }
 
             ShowFooter();
@@ -99,6 +98,7 @@ public abstract class Menu
             {
                 ShowNotifications(Program.CheckDraftOrderNotifications(), Program.CheckLowStockNotifications());
             }
+
             ConsoleKeyInfo key = Console.ReadKey(true);
 
             switch (key.Key)
@@ -123,16 +123,15 @@ public abstract class Menu
     // Notificantions ================================================'
     public void ShowNotifications(int notifications = 0, int lowStockCount = 0)
     {
-        int width = 52;
-        string line = new string('─', width - 2);
-        string headerLine = $"{Red}Notifikationer{Reset}{DimRed}" + new string('─', width - "Notifikationer".Length - 4);
+        string line = new string('─', menuWidth - 2);
+        string headerLine = $"{Red}Notifikationer{Reset}{DimRed}" + new string('─', menuWidth - "Notifikationer".Length - 4);
         Console.WriteLine($"{DimRed}┌──{Reset}{headerLine}┐{Reset}");
 
         // Notifikationsbanner hvis der er åbne kladdeordrer
         if (notifications >= 0)
         {
             string notificationText = $"  ● {notifications} kladdeordre(r) afventer godkendelse";
-            string paddedNotif = notificationText.PadRight(width - 2);
+            string paddedNotif = notificationText.PadRight(menuWidth - 2);
             Console.WriteLine($"{DimRed}│{Reset}{Yellow}{Bold}{paddedNotif}{Reset}{DimRed}│{Reset}");
         }
 
@@ -140,7 +139,7 @@ public abstract class Menu
         if (lowStockCount >= 0)
         {
             string lowStockText = $"  ● {lowStockCount} produkt(er) under minimumsbeholdning";
-            string paddedLowStock = lowStockText.PadRight(width - 2);
+            string paddedLowStock = lowStockText.PadRight(menuWidth - 2);
             Console.WriteLine($"{DimRed}│{Reset}{Red}{Bold}{paddedLowStock}{Reset}{DimRed}│{Reset}");
         }
         Console.WriteLine($"{DimRed}└{line}┘{Reset}");
