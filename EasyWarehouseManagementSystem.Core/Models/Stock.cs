@@ -12,7 +12,7 @@ namespace EasyWarehouseManagementSystem.Core.Models
         public bool IsActive { get; private set; }
 
         // The constructor for the Stock class
-        public Stock() { } // JsonConstructor for deserialization
+        [JsonConstructor]
         public Stock(int id, Product product, int amount)
         {
             Id = id;
