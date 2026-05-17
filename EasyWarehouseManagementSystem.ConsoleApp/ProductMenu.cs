@@ -40,7 +40,7 @@ public class ProductMenu : Menu
                     SearchProduct();
                     break;
                 case 3:
-                //    CreateProduct();
+                    CreateProduct();
                     break;
                 case 4:
                 //    ToggleProductActive();
@@ -98,6 +98,43 @@ public class ProductMenu : Menu
         }
 
         Console.WriteLine("\nTryk på en tast for at fortsætte...");
+        Console.ReadKey();
+    }
+    // Creates a new product
+    private void CreateProduct()
+    {
+        ShowHeader("Opret produkt");
+        Console.Write("Produktnavn: ");
+        string name = Console.ReadLine() ?? "";
+
+        Console.Write("Produktnummer: ");
+        string productNumber = Console.ReadLine() ?? "";
+
+        Console.Write("Pris: ");
+        if (!double.TryParse(Console.ReadLine(), out double price))
+        {
+            Console.WriteLine("Ugyldig pris.");
+            Console.ReadKey();
+            return;
+        }
+
+        ShowHeader("Opret produkt - Vælg popularitet");
+        int popularityChoice = ShowInteractiveMenu(["Ikke populær", "Populær", "Meget populær"]);
+        Popularity popularity = (Popularity)(popularityChoice - 1);
+
+        ShowHeader("Opret produkt - Vælg kategori");
+        List<Category> categories = _categoryRepo.GetCategories().ToList();
+        string[] categoryOptions = categories.Select(c => c.Name).ToArray();
+        int categoryChoice = ShowInteractiveMenu(categoryOptions);
+        Category selectedCategory = categories[categoryChoice - 1];
+
+        Product product = new Product(name, 0, price, popularity, selectedCategory, productNumber);
+        _productRepo.Add(product);
+
+        Stock stock = new Stock(0, product, 0);
+        _stockRepo.Add(stock);
+
+        Console.WriteLine($"\n✓ Produktet '{name}' er oprettet.");
         Console.ReadKey();
     }
 }
