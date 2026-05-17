@@ -1,11 +1,22 @@
-﻿namespace EasyWarehouseManagementSystem.ConsoleApp;
+﻿using EasyWarehouseManagementSystem.Core.Interfaces;
+using EasyWarehouseManagementSystem.Core.Models;
+using EasyWarehouseManagementSystem.Core.Repositories;
+
+namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 public class StockMenu : Menu
 {
     private static int _lowStockNotifications;
-    public StockMenu(int lowStock)
+    private IGenericRepo<Product> _productRepo;
+    private IGenericRepo<Stock> _stockRepo;
+    private CategoryRepo _categoryRepo;
+
+    public StockMenu(int lowStock, IGenericRepo<Product> productRepo, IGenericRepo<Stock> stockRepo, CategoryRepo categoryRepo)
     {
         _lowStockNotifications = lowStock;
+        _productRepo = productRepo;
+        _stockRepo = stockRepo;
+        _categoryRepo = categoryRepo;
     }
 
     public override void ShowMenu()
@@ -34,10 +45,11 @@ public class StockMenu : Menu
         }
     }
 
-    // Placeholder for low stock notification
+    // Shows a list of products that are under their category's minimum stock level, with color coding for critical levels and a clear table format
     private void ShowLowStock()
     {
-        var lowStockItems = Program.stockRepo.GetAll().Where(stock => stock.IsBelowMinStock()).ToList(); // Henter alle lagerbeholdninger og filtrerer dem, der er under minimumsbeholdning
+        Console.Clear();
+        var lowStockItems = _stockRepo.GetAll().Where(stock => stock.IsBelowMinStock()).ToList(); // Henter alle lagerbeholdninger og filtrerer dem, der er under minimumsbeholdning
 
         // Opsætter tabel bredder og divider
         int colId = 15;
@@ -50,12 +62,12 @@ public class StockMenu : Menu
         // Udskriver tabel header
         string headerLine = $"{Cyan}Produkter under minimumsbeholdning{Reset}{DimCyan}" + new string('─', 75 - "Produkter under minimumsbeholdning".Length - 4);
         Console.WriteLine($"{DimCyan}┌──{Reset}{headerLine}┐{Reset}");
-        Console.WriteLine($"{DimCyan}│{Reset}{Bold}{Gray} {"Varenr."}{DimCyan}│{Reset}{Bold}{Gray} {"Varenavn"}{DimCyan}│{Reset}{Bold}{Gray} {"Antal"}{DimCyan}│{Reset}{Bold}{Gray} {"Min. beholdning"}{Reset}{DimCyan}│{Reset}");
+        Console.WriteLine($"{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenr.").PadRight(colId-1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Varenavn").PadRight(colName - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Antal").PadRight(colQty - 1)}{DimCyan}│{Reset}{Bold}{Gray} {new string("Min. beholdning").PadRight(colMin - 1)}{Reset}{DimCyan}│{Reset}");
         Console.WriteLine(divider);
 
         if (!lowStockItems.Any())   // Tjekker om der er nogen produkter under minimumsbeholdning, og viser en besked hvis ikke
         {
-            int totalWidth = colId + colName + colQty + colMin + 3;
+            int totalWidth = colId + colName + colQty + colMin + 2;
             string msg = "Ingen produkter under minimumsbeholdning";
             Console.WriteLine($"{DimCyan}│{Reset}{Green} {msg.PadRight(totalWidth)}{DimCyan}│{Reset}");
         }
@@ -63,7 +75,7 @@ public class StockMenu : Menu
         {
             foreach (var stock in lowStockItems)
             {
-                var product = Program.productRepo.Get(stock.Id);
+                var product = _productRepo.Get(stock.Id);
                 string id = product.ProductNumber.ToString();
                 string name = product.Name.Length > colName - 1         // Tjekker om produktnavnet er længere end kolonnebredden, og forkorter det med "…" hvis det er tilfældet
                                ? product.Name[..(colName - 2)] + "…"
@@ -83,7 +95,7 @@ public class StockMenu : Menu
             }
         }
 
-        Console.WriteLine($"{Cyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
+        Console.WriteLine($"{DimCyan}└{new string('─', colId)}┴{new string('─', colName)}┴{new string('─', colQty)}┴{new string('─', colMin)}┘{Reset}");
         Console.WriteLine($"\n{Gray}  Tryk Esc for at vende tilbage...{Reset}");
 
         while (true)

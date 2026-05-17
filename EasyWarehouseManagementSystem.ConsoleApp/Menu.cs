@@ -8,20 +8,20 @@ public abstract class Menu
     public abstract void ShowMenu();
 
     // ANSI Colours and styles =================================
-    protected const string Reset = "\e[0m";
-    protected const string Bold = "\e[1m";
-    protected const string Dim = "\e[2m";
+    protected const string Reset    = "\e[0m";
+    protected const string Bold     = "\e[1m";
+    protected const string Dim      = "\e[2m";
 
-    protected const string White = "\e[97m";
-    protected const string Gray = "\e[90m";
-    protected const string Green = "\e[92m";
-    protected const string Cyan = "\e[96m";
-    protected const string DimCyan = "\e[2;96m";
-    protected const string Red = "\e[1;91m";
-    protected const string DimRed = "\e[2;91m";
-    protected const string Magenta = "\e[95m";
-    protected const string Blue = "\e[94m";
-    protected const string Yellow = "\e[93m";
+    protected const string White    = "\e[97m";
+    protected const string Gray     = "\e[90m";
+    protected const string Green    = "\e[92m";
+    protected const string Cyan     = "\e[96m";
+    protected const string DimCyan  = "\e[2;96m";
+    protected const string Red      = "\e[1;91m";
+    protected const string DimRed   = "\e[2;91m";
+    protected const string Magenta  = "\e[95m";
+    protected const string Blue     = "\e[94m";
+    protected const string Yellow   = "\e[93m";
 
     // Header with logo and title ==============================
     protected void ShowHeader(string title)

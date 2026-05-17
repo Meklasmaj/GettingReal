@@ -7,14 +7,14 @@ namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 class Program
 {
-    public static IGenericRepo<Product> productRepo = new JsonRepo<Product>("products.json");
-    public static IGenericRepo<Stock> stockRepo = new JsonRepo<Stock>("stocks.json");
+    private static IGenericRepo<Product> productRepo = new JsonRepo<Product>("products.json");
+    private static IGenericRepo<Stock> stockRepo = new JsonRepo<Stock>("stocks.json");
     private static IGenericRepo<Supplier> supplierRepo = new JsonRepo<Supplier>("suppliers.json");
     private static IGenericRepo<DraftOrder> draftOrderRepo = new JsonRepo<DraftOrder>("draftOrders.json");
     public static Menu MainMenu = new MainMenu(CheckDraftOrderNotifications());
     // Needs new methods
     public static Menu ProductMenu = new ProductMenu(productRepo, stockRepo, new CategoryRepo());
-    public static Menu StockMenu = new MainMenu(CheckDraftOrderNotifications());
+    public static Menu StockMenu = new StockMenu(CheckLowStockNotifications(), productRepo, stockRepo, new CategoryRepo());
     public static Menu SupplierMenu = new MainMenu(CheckDraftOrderNotifications());
     public static Menu DraftOrderMenu = new MainMenu(CheckDraftOrderNotifications());
     
