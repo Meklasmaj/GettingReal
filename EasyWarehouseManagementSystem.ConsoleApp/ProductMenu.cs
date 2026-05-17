@@ -1,6 +1,7 @@
 ﻿using EasyWarehouseManagementSystem.Core.Interfaces;
 using EasyWarehouseManagementSystem.Core.Models;
 using EasyWarehouseManagementSystem.Core.Repositories;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace EasyWarehouseManagementSystem.ConsoleApp;
 
 public class ProductMenu : Menu
 {
-    private static readonly string[] Options = ["Se alle produkter", "Søg efter produkt", "Opret produkt", "Skift produktstatus"];
+    private static readonly string[] Options = ["Se alle produkter", "Søg efter produkt", "Skift produktstatus", "Opret produkt", "Slet produkt"];
     private IGenericRepo<Product> _productRepo;
     private IGenericRepo<Stock> _stockRepo;
     private CategoryRepo _categoryRepo;
@@ -40,10 +41,13 @@ public class ProductMenu : Menu
                     SearchProduct();
                     break;
                 case 3:
-                    CreateProduct();
+                    ToggleProductStatus();
                     break;
                 case 4:
-                    ToggleProductStatus();
+                    CreateProduct();
+                    break;
+                case 5:
+                    DeleteProduct();
                     break;
             }
         }
@@ -171,6 +175,36 @@ public class ProductMenu : Menu
         _stockRepo.Update(selectedStock);
 
         Console.WriteLine($"\n✓ '{selectedStock.Product.Name}' er nu {(selectedStock.IsActive ? "aktiv" : "inaktiv")}.");
+        Console.ReadKey();
+    }
+    // Method for deleting a product and its stock
+    private void DeleteProduct()
+    {
+        ShowHeader("Slet produkt");
+        List<Product> products = _productRepo.GetAll().ToList();
+
+        if (!products.Any())
+        {
+            Console.WriteLine("Ingen produkter fundet.");
+            Console.ReadKey();
+            return;
+        }
+
+        string[] productOptions = products.Select(p => p.Name).ToArray();
+        int choice = ShowInteractiveMenu(productOptions);
+        if (choice == -1) return;
+        Product selectedProduct = products[choice - 1];
+
+        // Ask for confirmation before deleting
+        ShowHeader("Slet produkt - Bekræft");
+        Console.WriteLine($"Er du sikker på at du vil slette '{selectedProduct.Name}'?");
+        int confirm = ShowInteractiveMenu(["Ja, slet produktet", "Nej, gå tilbage"]);
+        if (confirm == -1 || confirm == 2) return;
+
+        _productRepo.Delete(selectedProduct.Id);
+        _stockRepo.Delete(selectedProduct.Id);
+
+        Console.WriteLine($"\n✓ '{selectedProduct.Name}' er slettet.");
         Console.ReadKey();
     }
 }
